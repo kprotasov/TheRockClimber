@@ -1,0 +1,68 @@
+package com.capcorn.games.therockclimber;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.VideoView;
+
+/**
+ * Created by kprotasov on 03.06.2017.
+ */
+
+public class MainActivity extends Activity{
+
+    private VideoView videoView;
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        this.setContentView(R.layout.main_activity);
+
+        getWindow().setFormat(PixelFormat.UNKNOWN);
+        videoView = (VideoView)findViewById(R.id.videoView);
+        final String videoPath =  "android.resource://" + getPackageName() + "/" + R.raw.background_video_2;
+        final Uri videoUri = Uri.parse(videoPath);
+
+        videoView.setVideoURI(videoUri);
+        videoView.requestFocus();
+        videoView.start();
+
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(final MediaPlayer mediaPlayer) {
+                mediaPlayer.setLooping(true);
+            }
+        });
+
+        final TextView startButton = (TextView) findViewById(R.id.start_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                videoView.pause();
+                final Intent gameIntent = new Intent(MainActivity.this, AndroidLauncher.class);
+                startActivity(gameIntent);
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        videoView.pause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        videoView.start();
+    }
+
+}
