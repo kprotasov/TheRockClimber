@@ -1,7 +1,7 @@
 package com.capcorn.game.engine.sprite;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.capcorn.games.eightmarchcatch.font.FontUtils;
+import com.capcorn.games.therockclimber.font.FontUtils;
 
 /**
  * Created by kprotasov on 04.12.2016.

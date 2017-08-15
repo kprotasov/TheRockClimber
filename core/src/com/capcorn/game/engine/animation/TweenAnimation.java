@@ -12,6 +12,9 @@ public class TweenAnimation {
     private String state;
     private float x;
     private float y;
+    private float fromX;
+    private float fromY;
+    private float speed;
     private float speedX;
     private float speedY;
     private float destX;
@@ -26,8 +29,17 @@ public class TweenAnimation {
         restart(fromX, fromY, destX, destY, speed);
     }
 
+    public void copyFromAnimation(final TweenAnimation animation) {
+        restart(animation.getFromX(), animation.getFromY(), animation.getDestX(), animation.getDestY(), animation.getSpeed());
+    }
+
     public void restart(final float fromX, final float fromY, final float destX, final float destY, final float speed){
         this.state = STATE_PAUSED;
+        this.fromX = fromX;
+        this.fromY = fromY;
+        this.destX = destX;
+        this.destY = destY;
+        this.speed = speed;
         this.x = fromX;
         this.y = fromY;
         //Для того чтобы приращение по x и по у было одинаково пересчитываем скорость так что большее расстояние будет большей скоростью а меньшее меньшей
@@ -97,14 +109,25 @@ public class TweenAnimation {
                     y = nextY;
                 }
             }
+            Gdx.app.log("TweenAnimation", "preview " + "nextX " + nextX + " destX " + destX + " nextY " + nextY + " destY " + destY);
             if (nextX == destX && nextY == destY){
                 state = STATE_PAUSED;
+                x = nextX;
+                y = nextY;
                 if (listener != null){
                     listener.onAnimationFinish(destX, destY);
                 }
-                Gdx.app.log("TweenAnimation", "state paused");
+                Gdx.app.log("TweenAnimation", "state paused " + "nextX " + nextX + " destX " + destX + " nextY " + nextY + " destY " + destY);
             }
         }
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public float getX() {
@@ -113,6 +136,26 @@ public class TweenAnimation {
 
     public float getY() {
         return y;
+    }
+
+    public float getFromX() {
+        return fromX;
+    }
+
+    public float getFromY() {
+        return fromY;
+    }
+
+    public float getDestX() {
+        return destX;
+    }
+
+    public float getDestY() {
+        return destY;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 
     public String getState() {

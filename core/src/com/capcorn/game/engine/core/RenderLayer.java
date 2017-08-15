@@ -45,12 +45,11 @@ public class RenderLayer {
     private float gameWidth;
     private float gameHeight;
 
-    private Color baseColor;
-
     private float runTime = 0;
 
     private boolean showLogs = false;
     private BitmapFont font;
+    private Color[] backgroundColors = new Color[4];
 
     public RenderLayer(final OrthographicCamera camera, final Color baseColor, final float gameWidth, final float gameHeight) {
         spritesList = new ArrayList<BaseEntity>();
@@ -60,7 +59,7 @@ public class RenderLayer {
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
 
-        this.baseColor = baseColor;
+        setColor(baseColor);
 
         spriteBatch = new SpriteBatch();
         spriteBatch.setProjectionMatrix(camera.combined);
@@ -70,6 +69,17 @@ public class RenderLayer {
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
+    }
+
+    public void setColor(final Color color) {
+        setColor(color, color, color, color);
+    }
+
+    public void setColor(final Color leftTopColor, final Color rightTopColor, final Color rightBottomColor, final Color leftBottomColor) {
+        this.backgroundColors[0] = leftTopColor;
+        this.backgroundColors[1] = rightTopColor;
+        this.backgroundColors[2] = rightBottomColor;
+        this.backgroundColors[3] = leftBottomColor;
     }
 
     public void showLogs(final boolean showLogs) {
@@ -86,9 +96,8 @@ public class RenderLayer {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(baseColor);
 
-        shapeRenderer.rect(0, 0, gameWidth, gameHeight);
+        shapeRenderer.rect(0, 0, gameWidth, gameHeight, backgroundColors[0], backgroundColors[1], backgroundColors[2], backgroundColors[3]);
         shapeRenderer.end();
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -197,8 +206,12 @@ public class RenderLayer {
                 animatedSprite.setX(animatedSprite.getTweenAnimation().getX());
                 animatedSprite.setY(animatedSprite.getTweenAnimation().getY());
             }
+            final float originX = animatedSprite.getWidth() / 2;
+            final float originY = animatedSprite.getHeight() / 2;
+            final float scaleX = 1.0f;
+            final float scaleY = 1.0f;
             spriteBatch.draw(animatedSprite.getTextureRegion(), animatedSprite.getX(), animatedSprite.getY(),
-                             animatedSprite.getWidth(), animatedSprite.getHeight());
+                    originX, originY, animatedSprite.getWidth(), animatedSprite.getHeight(), scaleX, scaleY, animatedSprite.getRotateAngle());
             spriteBatch.disableBlending();
         }
     }
@@ -231,10 +244,6 @@ public class RenderLayer {
             spritesList.remove(removedIndex);
             removeLayer(removedEntity.getLayer());
         }
-    }
-
-    public void setColor(final Color color){
-        this.baseColor = color;
     }
 
     public void addSprite(final Sprite sprite, final boolean blending, final int layer) {

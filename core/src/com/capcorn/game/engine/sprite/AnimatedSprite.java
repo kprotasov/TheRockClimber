@@ -1,5 +1,6 @@
 package com.capcorn.game.engine.sprite;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Polygon;
@@ -22,6 +23,7 @@ public class AnimatedSprite implements SpriteBase {
     private float width;
     private float height;
     private float stateTime;
+    private float rotateAngle;
     private AnimationState state = AnimationState.PLAY;
     private OnAnimationFinishListener onAnimationFinishListener;
 
@@ -129,6 +131,14 @@ public class AnimatedSprite implements SpriteBase {
         } else {
             return height;
         }
+    }
+
+    public float getRotateAngle() {
+        return rotateAngle;
+    }
+
+    public void setRotateAngle(float rotateAngle) {
+        this.rotateAngle = rotateAngle;
     }
 
     public void setHeight(final float height) {
