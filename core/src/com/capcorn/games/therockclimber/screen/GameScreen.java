@@ -42,7 +42,7 @@ public class GameScreen implements Screen, OnTouchListener{
     private static final int TILE_WIDTH = 100;
     private static final int TILE_BEVEL_SIZE = 20;
     private static final int TILE_HEIGHT = 240;
-    private static final int TILE_SPEED = 800;
+    private static final int TILE_SPEED = 500;
     private static final float CHARACTER_TWEEN_SPEED = 2000.0f;
     private static int HORIZONTAL_TILE_COUNT;
     private static int VERTICAL_TILE_COUNT;

@@ -109,7 +109,6 @@ public class TweenAnimation {
                     y = nextY;
                 }
             }
-            Gdx.app.log("TweenAnimation", "preview " + "nextX " + nextX + " destX " + destX + " nextY " + nextY + " destY " + destY);
             if (nextX == destX && nextY == destY){
                 state = STATE_PAUSED;
                 x = nextX;
@@ -117,7 +116,6 @@ public class TweenAnimation {
                 if (listener != null){
                     listener.onAnimationFinish(destX, destY);
                 }
-                Gdx.app.log("TweenAnimation", "state paused " + "nextX " + nextX + " destX " + destX + " nextY " + nextY + " destY " + destY);
             }
         }
     }

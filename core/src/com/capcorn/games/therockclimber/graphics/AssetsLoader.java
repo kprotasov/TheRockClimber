@@ -5,9 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import java.util.Random;
+
 import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.CHARACTER;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
-import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.GOLD;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE;
 
@@ -19,28 +21,36 @@ public class AssetsLoader {
 
     private static final float CHARACTER_ANIMATION_TIME = 0.03f; // 20 frames per seconds
 
+    private final Random tileRandom;
+
     private Texture characterTexture;
     private Animation characterRightAnimation;
     private Animation characterLeftAnimation;
-
     private Texture backgroundTexture;
     private TextureRegion backgroundTextureRegion;
+
     private Texture blackTileTexture;
-    private TextureRegion blackTileLeftTextureRegion;
-    private TextureRegion blackTileRightTextureRegion;
+    private TextureRegion[] blackTileLeftTextureRegions = new TextureRegion[2];
+    private TextureRegion[] blackTileRightTextureRegions = new TextureRegion[2];
+
     private Texture whiteTileTexture;
     private TextureRegion whiteTileLeftTextureRegion;
     private TextureRegion whiteTileRightTextureRegion;
+
     private Texture goldTexture;
     private TextureRegion goldTextureRegion;
 
     private AssetManager manager;
 
+    public AssetsLoader() {
+        tileRandom = new Random();
+    }
+
     public AssetManager start() {
         manager = new AssetManager();
         manager.load(CHARACTER.getName(), Texture.class);
         manager.load(BACKGROUND.getName(), Texture.class);
-        manager.load(BLACK_TILE.getName(), Texture.class);
+        manager.load(BLACK_TILE_ATLAS.getName(), Texture.class);
         manager.load(WHITE_TILE.getName(), Texture.class);
         manager.load(GOLD.getName(), Texture.class);
         return manager;
@@ -53,7 +63,7 @@ public class AssetsLoader {
         backgroundTexture = manager.get(BACKGROUND.getName());
         backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        blackTileTexture = manager.get(BLACK_TILE.getName());
+        blackTileTexture = manager.get(BLACK_TILE_ATLAS.getName());
         blackTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         whiteTileTexture = manager.get(WHITE_TILE.getName());
@@ -66,8 +76,7 @@ public class AssetsLoader {
         goldTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         createBackgroundTextureRegion();
-        createBlackTileLeftTextureRegion();
-        createBlackTileRightTextureRegion();
+        createBlackTileTextureRegions();
         createWhiteTileLeftTextureRegion();
         createWhiteTileRightTextureRegion();
         createGoldTextureRegion();
@@ -81,7 +90,7 @@ public class AssetsLoader {
         }
         manager.unload(CHARACTER.getName());
         manager.unload(BACKGROUND.getName());
-        manager.unload(BLACK_TILE.getName());
+        manager.unload(BLACK_TILE_ATLAS.getName());
         manager.unload(WHITE_TILE.getName());
         manager.unload(GOLD.getName());
         manager.dispose();
@@ -100,11 +109,13 @@ public class AssetsLoader {
     }
 
     public TextureRegion getBlackTileLeftTextureRegion() {
-        return blackTileLeftTextureRegion;
+        final int tilePosition = tileRandom.nextInt(blackTileLeftTextureRegions.length);
+        return blackTileLeftTextureRegions[tilePosition];
     }
 
     public TextureRegion getBlackTileRightTextureRegion() {
-        return blackTileRightTextureRegion;
+        final int tilePosition = tileRandom.nextInt(blackTileRightTextureRegions.length);
+        return blackTileRightTextureRegions[tilePosition];
     }
 
     public TextureRegion getWhiteTileLeftTextureRegion() {
@@ -158,14 +169,19 @@ public class AssetsLoader {
         backgroundTextureRegion.flip(false, true);
     }
 
-    private void createBlackTileLeftTextureRegion() {
-        blackTileLeftTextureRegion = new TextureRegion(blackTileTexture, 0, 0, BLACK_TILE.getWidth(), BLACK_TILE.getHeight());
-        blackTileLeftTextureRegion.flip(true, true);
-    }
+    private void createBlackTileTextureRegions() {
+        final int count = blackTileLeftTextureRegions.length;
+        for (int i = 0; i < count; i++) {
+            final TextureRegion textureRegionLeft = new TextureRegion(blackTileTexture, (BLACK_TILE_ATLAS.getWidth() / count) * i,
+                    0, (BLACK_TILE_ATLAS.getWidth() / count), BLACK_TILE_ATLAS.getHeight());
+            textureRegionLeft.flip(true, true);
+            blackTileLeftTextureRegions[i] = textureRegionLeft;
 
-    private void createBlackTileRightTextureRegion() {
-        blackTileRightTextureRegion = new TextureRegion(blackTileTexture, 0, 0, BLACK_TILE.getWidth(), BLACK_TILE.getHeight());
-        blackTileRightTextureRegion.flip(false, true);
+            final TextureRegion textureRegionRight = new TextureRegion(blackTileTexture, (BLACK_TILE_ATLAS.getWidth() / count) * i,
+                    0, (BLACK_TILE_ATLAS.getWidth() / count), BLACK_TILE_ATLAS.getHeight());
+            textureRegionRight.flip(false, true);
+            blackTileRightTextureRegions[i] = textureRegionRight;
+        }
     }
 
     private void createWhiteTileLeftTextureRegion() {
