@@ -19,6 +19,7 @@ import com.capcorn.game.engine.utils.PositionUtils;
 import com.capcorn.games.therockclimber.creator.TileCreator;
 import com.capcorn.games.therockclimber.entity.TileEntity;
 import com.capcorn.games.therockclimber.font.DistanceFontCreator;
+import com.capcorn.games.therockclimber.font.FontUtils;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
 import com.capcorn.games.therockclimber.input.InputHandler;
 import com.capcorn.games.therockclimber.input.OnTouchListener;
@@ -59,7 +60,11 @@ public class GameScreen implements Screen, OnTouchListener{
     private ObjectPool pool;
     private Animator animator;
     private BitmapFont gameFont;
+
     private TextSprite distanceText;
+    private int distance = 0;
+    private TextSprite moneyText;
+    private int moneyCount = 0;
 
     private TweenAnimation characterLeftTween;
     private TweenAnimation characterRightTween;
@@ -74,8 +79,6 @@ public class GameScreen implements Screen, OnTouchListener{
 
     private AccelerationRandom goldBonusRandom;
     private BinaryRandom binaryRandom;
-
-    private int distance = 0;
 
     private static final int BACKGROUND_LAYER = 0;
     private static final int TILE_LAYER = 1;
@@ -151,6 +154,8 @@ public class GameScreen implements Screen, OnTouchListener{
 
             distanceText = new TextSprite("0m", gameFont, 50, 30);
             renderLayer.addTextSprite(distanceText, TEXT_LAYER);
+            moneyText = new TextSprite("0", gameFont, screenSize.WIDTH - FontUtils.getFontWidth(gameFont, "0") - 50, 30);
+            renderLayer.addTextSprite(moneyText, TEXT_LAYER);
         }catch (Exception e) {
             e.printStackTrace();
         }
