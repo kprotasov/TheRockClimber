@@ -43,8 +43,9 @@ public class GameScreen implements Screen, OnTouchListener{
     private static final int TILE_WIDTH = 100;
     private static final int TILE_BEVEL_SIZE = 20;
     private static final int TILE_HEIGHT = 240;
-    private static final int TILE_SPEED = 500;
+    private static final int TILE_SPEED = 800;
     private static final float CHARACTER_TWEEN_SPEED = 2000.0f;
+    private static final float GOLD_TWEEN_SPEED = 1000.0f;
     private static int HORIZONTAL_TILE_COUNT;
     private static int VERTICAL_TILE_COUNT;
     private static float CHARACTER_Y_POSITION;
@@ -259,17 +260,48 @@ public class GameScreen implements Screen, OnTouchListener{
             if (tileSpriteUnderCharacter != null) {
                 Gdx.app.log("TileType", tileSpriteUnderCharacter.getType().name());
                 if (tileSpriteUnderCharacter.hasBonus()) { // TODO услокие бонусов
-                    //defaultScore+=10;
-                    //final String defaultScoreText = String.valueOf(defaultScore);
-                    //final float scoreX = gameWidth - FontUtils.getFontWidth(gameFont, defaultScoreText) - SCORE_OFFSET;
-                    //scoreText.setX(scoreX);
-                    //scoreText.setText(defaultScoreText);
-                    pool.release(tileSpriteUnderCharacter.getBonus());
-                    renderLayer.removeSprite(tileSpriteUnderCharacter.getBonus());
-                    tileSpriteUnderCharacter.setBonus(null);
+                    onBonusCatched(tileSpriteUnderCharacter);
                 }
             }
         }
+    }
+
+    private void onBonusCatched(final TileSprite tileWithBonus) {
+        final Sprite bonus = tileWithBonus.getBonus();
+        try {
+            final GoldSprite goldSprite = (GoldSprite) pool.get(GoldSprite.class);
+            goldSprite.setTextureRegion(assetsLoader.getGoldTextureRegion());
+            goldSprite.setX(bonus.getX());
+            goldSprite.setY(bonus.getY());
+            goldSprite.setWidth(bonus.getWidth());
+            goldSprite.setHeight(bonus.getHeight());
+            final TweenAnimation goldTweenAnimation;
+            if (goldSprite.getTweenAnimation() != null) {
+                goldTweenAnimation = goldSprite.getTweenAnimation();
+            } else {
+                goldTweenAnimation = new TweenAnimation();
+                goldSprite.setTweenAnimation(goldTweenAnimation);
+            }
+            animator.createAnimation(goldTweenAnimation);
+            goldTweenAnimation.restart(goldSprite.getX(), goldSprite.getY(), moneyText.getX(), moneyText.getY(), GOLD_TWEEN_SPEED);
+            goldTweenAnimation.start();
+            goldTweenAnimation.setOnAnimationFinishListener(new TweenAnimation.OnAnimationFinishListener() {
+                @Override
+                public void onAnimationFinish(final float destX, final float destY) {
+                    moneyCount ++;
+                    moneyText.setText(moneyCount + "");
+                    moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
+                    renderLayer.removeSprite(goldSprite);
+                    pool.release(goldSprite);
+                }
+            });
+            renderLayer.addSprite(goldSprite, true, TILE_LAYER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        pool.release(bonus);
+        renderLayer.removeSprite(bonus);
+        tileWithBonus.setBonus(null);
     }
 
     private void createNewPair() {
