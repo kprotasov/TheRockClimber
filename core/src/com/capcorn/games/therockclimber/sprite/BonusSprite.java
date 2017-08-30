@@ -9,18 +9,22 @@ import com.capcorn.game.engine.sprite.Sprite;
  * Time: 17:54
  */
 
-public class GoldSprite extends Sprite {
+public class BonusSprite extends Sprite {
 
-    public GoldSprite() {
+    public BonusSprite() {
         super();
     }
 
-    public GoldSprite(TextureRegion textureRegion, float x, float y, float width, float height) {
+    public BonusSprite(TextureRegion textureRegion, float x, float y, float width, float height) {
         super(textureRegion, x, y, width, height);
     }
 
-    public GoldSprite(TextureRegion textureRegion, float x, float y) {
+    public BonusSprite(TextureRegion textureRegion, float x, float y) {
         super(textureRegion, x, y);
+    }
+
+    public BonusType getType() {
+        return BonusType.GOLD;
     }
 
 }

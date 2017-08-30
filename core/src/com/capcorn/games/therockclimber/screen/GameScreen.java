@@ -24,6 +24,7 @@ import com.capcorn.games.therockclimber.graphics.AssetsLoader;
 import com.capcorn.games.therockclimber.input.InputHandler;
 import com.capcorn.games.therockclimber.input.OnTouchListener;
 import com.capcorn.games.therockclimber.settings.Settings;
+import com.capcorn.games.therockclimber.sprite.BonusSprite;
 import com.capcorn.games.therockclimber.sprite.CharacterSprite;
 import com.capcorn.games.therockclimber.sprite.GoldSprite;
 import com.capcorn.games.therockclimber.sprite.TileSprite;
@@ -45,13 +46,15 @@ public class GameScreen implements Screen, OnTouchListener{
     private static final int TILE_HEIGHT = 240;
     private static final int TILE_SPEED = 800;
     private static final float CHARACTER_TWEEN_SPEED = 2000.0f;
-    private static final float GOLD_TWEEN_SPEED = 1000.0f;
+    private static final float GOLD_TWEEN_SPEED = 1500.0f;
     private static int HORIZONTAL_TILE_COUNT;
     private static int VERTICAL_TILE_COUNT;
     private static float CHARACTER_Y_POSITION;
     private static final float CHARACTER_X_OFFSET = 50;
     private static final float GOLD_SIZE = 50;
     private static final float CHARACTER_HEIGHT = 196;
+
+    private boolean isFailedGame = false;
 
     private AssetsLoader assetsLoader;
     private RenderLayer renderLayer;
@@ -148,6 +151,7 @@ public class GameScreen implements Screen, OnTouchListener{
 
             pool.create(TileSprite.class, HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
             pool.create(TileEntity.class, HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
+            pool.create(BonusSprite.class, 1);
             pool.create(GoldSprite.class, 1);
 
             goldBonusRandom = new AccelerationRandom(10, 50, 1);
@@ -217,12 +221,6 @@ public class GameScreen implements Screen, OnTouchListener{
                     i++;
                 }
             }
-            /*if (getTileTypeUnderDuck().equals(TileEntity.Type.BLACK)) {//TODO условие проигрыша
-                if (screenChangeListener != null) {
-                    //screenChangeListener.onScreenChange(ScreenType.LOOSE_SCREEN);
-                }
-            }*/
-
             createNewPair();
         } else {
             int i = 0;
@@ -262,8 +260,26 @@ public class GameScreen implements Screen, OnTouchListener{
                 if (tileSpriteUnderCharacter.hasBonus()) { // TODO услокие бонусов
                     onBonusCatched(tileSpriteUnderCharacter);
                 }
+                if (tileSpriteUnderCharacter.getType().equals(TileEntity.Type.BLACK)) {
+                    if (!isFailedGame) {
+                        isFailedGame = true;
+                        Gdx.app.log("Loose", "looooooooooooossseeeeee");
+                    }
+                }
             }
         }
+    }
+
+    private void onGameFail() {
+        final TweenAnimation failTweenAnimation;
+        if (character.getTweenAnimation() == null) {
+            failTweenAnimation = new TweenAnimation();
+            character.setTweenAnimation(failTweenAnimation);
+        } else {
+            failTweenAnimation = character.getTweenAnimation();
+        }
+        animator.createAnimation(failTweenAnimation);
+        failTweenAnimation.restart(character.getX(), character.getY(), screenSize.WIDTH / 2 - character.getWidth() / 2, screenSize.HEIGHT, );
     }
 
     private void onBonusCatched(final TileSprite tileWithBonus) {
@@ -271,8 +287,6 @@ public class GameScreen implements Screen, OnTouchListener{
         try {
             final GoldSprite goldSprite = (GoldSprite) pool.get(GoldSprite.class);
             goldSprite.setTextureRegion(assetsLoader.getGoldTextureRegion());
-            goldSprite.setX(bonus.getX());
-            goldSprite.setY(bonus.getY());
             goldSprite.setWidth(bonus.getWidth());
             goldSprite.setHeight(bonus.getHeight());
             final TweenAnimation goldTweenAnimation;
@@ -283,7 +297,7 @@ public class GameScreen implements Screen, OnTouchListener{
                 goldSprite.setTweenAnimation(goldTweenAnimation);
             }
             animator.createAnimation(goldTweenAnimation);
-            goldTweenAnimation.restart(goldSprite.getX(), goldSprite.getY(), moneyText.getX(), moneyText.getY(), GOLD_TWEEN_SPEED);
+            goldTweenAnimation.restart(bonus.getX(), bonus.getY(), moneyText.getX(), moneyText.getY(), GOLD_TWEEN_SPEED);
             goldTweenAnimation.start();
             goldTweenAnimation.setOnAnimationFinishListener(new TweenAnimation.OnAnimationFinishListener() {
                 @Override
@@ -292,7 +306,7 @@ public class GameScreen implements Screen, OnTouchListener{
                     moneyText.setText(moneyCount + "");
                     moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
                     renderLayer.removeSprite(goldSprite);
-                    pool.release(goldSprite);
+                    //pool.release(goldSprite);
                 }
             });
             renderLayer.addSprite(goldSprite, true, TILE_LAYER);
@@ -365,19 +379,19 @@ public class GameScreen implements Screen, OnTouchListener{
                         isLeft = false;
                     }
                 }
-                final GoldSprite goldSprite = (GoldSprite) pool.get(GoldSprite.class);
-                goldSprite.setTextureRegion(assetsLoader.getGoldTextureRegion());
-                goldSprite.setWidth(GOLD_SIZE);
-                goldSprite.setHeight(GOLD_SIZE);
-                final float goldYPos = notEmptyTileSprite.getY() + notEmptyTileSprite.getHeight() * 0.5f - goldSprite.getHeight() * 0.5f;
-                goldSprite.setY(goldYPos);
+                final BonusSprite bonusSprite = (BonusSprite) pool.get(BonusSprite.class);
+                bonusSprite.setTextureRegion(assetsLoader.getGoldTextureRegion());
+                bonusSprite.setWidth(GOLD_SIZE);
+                bonusSprite.setHeight(GOLD_SIZE);
+                final float goldYPos = notEmptyTileSprite.getY() + notEmptyTileSprite.getHeight() * 0.5f - bonusSprite.getHeight() * 0.5f;
+                bonusSprite.setY(goldYPos);
                 if (isLeft) {
-                    goldSprite.setX(notEmptyTileSprite.getX() + notEmptyTileSprite.getWidth());
+                    bonusSprite.setX(notEmptyTileSprite.getX() + notEmptyTileSprite.getWidth());
                 } else {
-                    goldSprite.setX(notEmptyTileSprite.getX() - goldSprite.getWidth());
+                    bonusSprite.setX(notEmptyTileSprite.getX() - bonusSprite.getWidth());
                 }
-                notEmptyTileSprite.setBonus(goldSprite);
-                renderLayer.addSprite(goldSprite, true, BONUS_LAYER);
+                notEmptyTileSprite.setBonus(bonusSprite);
+                renderLayer.addSprite(bonusSprite, true, BONUS_LAYER);
             }
 
         } catch (final Exception e) {

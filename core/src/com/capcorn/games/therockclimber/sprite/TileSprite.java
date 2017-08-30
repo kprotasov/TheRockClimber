@@ -14,7 +14,7 @@ import com.capcorn.games.therockclimber.graphics.AssetsLoader;
 
 public class TileSprite extends Sprite {
 
-    private Sprite bonus;
+    private BonusSprite bonus;
     private TileEntity.Type type;
     private TileEntity.Position position;
 
@@ -46,11 +46,11 @@ public class TileSprite extends Sprite {
         super(textureRegion, x, y);
     }
 
-    public Sprite getBonus() {
+    public BonusSprite getBonus() {
         return bonus;
     }
 
-    public void setBonus(Sprite bonus) {
+    public void setBonus(BonusSprite bonus) {
         this.bonus = bonus;
     }
 
