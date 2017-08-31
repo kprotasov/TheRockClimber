@@ -53,17 +53,19 @@ public class GameScreen implements Screen, OnTouchListener{
     private static final float CHARACTER_X_OFFSET = 50;
     private static final float GOLD_SIZE = 50;
     private static final float CHARACTER_HEIGHT = 196;
+    private static final float CHARACTER_FAIL_SPEED = 800.0f;
 
+    private boolean gameIsStarted = false;
     private boolean isFailedGame = false;
 
-    private AssetsLoader assetsLoader;
-    private RenderLayer renderLayer;
-    private Settings.ScreenSize screenSize;
-    private OrthographicCamera camera;
-    private FPSLogger fps;
-    private ObjectPool pool;
-    private Animator animator;
-    private BitmapFont gameFont;
+    private final AssetsLoader assetsLoader;
+    private final RenderLayer renderLayer;
+    private final Settings.ScreenSize screenSize;
+    private final OrthographicCamera camera;
+    private final FPSLogger fps;
+    private final ObjectPool pool;
+    private final Animator animator;
+    private final BitmapFont gameFont;
 
     private TextSprite distanceText;
     private int distance = 0;
@@ -76,9 +78,9 @@ public class GameScreen implements Screen, OnTouchListener{
     private CharacterSprite character;
     private Sprite backgroundSprite;
 
-    private TileCreator tileCreator;
+    private final TileCreator tileCreator;
     private ArrayList<TileEntity> tiles;
-    private ArrayList<TileSprite> tileSprites;
+    private final ArrayList<TileSprite> tileSprites;
     private float tilesStartYPosition = TILE_HEIGHT;
 
     private AccelerationRandom goldBonusRandom;
@@ -120,11 +122,10 @@ public class GameScreen implements Screen, OnTouchListener{
         tiles = tileCreator.createTiles();
         tileSprites = new ArrayList<TileSprite>(HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
 
-        createTiles();
+        createDefaultTiles();
     }
 
     private void initGameObjects() {
-        // init objects from pool
         try {
             backgroundSprite = new Sprite(assetsLoader.getBackgroundTextureRegion(), 0, 0, screenSize.WIDTH, screenSize.HEIGHT);
             renderLayer.addSprite(backgroundSprite, true, BACKGROUND_LAYER);
@@ -166,21 +167,37 @@ public class GameScreen implements Screen, OnTouchListener{
         }
     }
 
-    private void createTiles() {
+    private void createDefaultTiles() {
         int i = 0;
         for (int y = 0; y < VERTICAL_TILE_COUNT; y++) {
             for (int x = 0; x < HORIZONTAL_TILE_COUNT; x++) {
                 try {
-                    TileSprite tileSprite;
+                    final TileSprite tileSprite;
                     final float currentYPosition = screenSize.HEIGHT - (y + 1) * TILE_HEIGHT;
                     if (x == 0) {
                         final float leftXPosition = - TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
-                        tileSprite = TileSprite.createTileSprite(leftXPosition, screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT, tiles.get(i).getType(),
-                                TileEntity.Position.LEFT, pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);
+                        /*tileSprite = TileSprite.createTileSprite(leftXPosition, screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT, tiles.get(i).getType(),
+                                TileEntity.Position.LEFT, pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);*/
+                        tileSprite = new TileSprite();
+                        tileSprite.setTextureRegion(assetsLoader.getWhiteTileRightTextureRegion());
+                        tileSprite.setX(leftXPosition);
+                        tileSprite.setY(screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT);
+                        tileSprite.setType(TileEntity.Type.WHITE);
+                        tileSprite.setPosition(TileEntity.Position.LEFT);
+                        tileSprite.setWidth(TILE_WIDTH);
+                        tileSprite.setHeight(TILE_HEIGHT);
                     } else {
                         final float rightXPosition = (screenSize.WIDTH - TILE_WIDTH) + TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
-                        tileSprite = TileSprite.createTileSprite(rightXPosition, screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT, tiles.get(i).getType(),
-                                TileEntity.Position.RIGHT, pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);
+                        /*tileSprite = TileSprite.createTileSprite(rightXPosition, screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT, tiles.get(i).getType(),
+                                TileEntity.Position.RIGHT, pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);*/
+                        tileSprite = new TileSprite();
+                        tileSprite.setTextureRegion(assetsLoader.getWhiteTileLeftTextureRegion());
+                        tileSprite.setX(rightXPosition);
+                        tileSprite.setY(screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT);
+                        tileSprite.setType(TileEntity.Type.WHITE);
+                        tileSprite.setPosition(TileEntity.Position.RIGHT);
+                        tileSprite.setWidth(TILE_WIDTH);
+                        tileSprite.setHeight(TILE_HEIGHT);
                     }
                     renderLayer.addSprite(tileSprite, true, TILE_LAYER);
                     tileSprites.add(tileSprite);
@@ -264,6 +281,7 @@ public class GameScreen implements Screen, OnTouchListener{
                     if (!isFailedGame) {
                         isFailedGame = true;
                         Gdx.app.log("Loose", "looooooooooooossseeeeee");
+                        onGameFail();
                     }
                 }
             }
@@ -279,7 +297,8 @@ public class GameScreen implements Screen, OnTouchListener{
             failTweenAnimation = character.getTweenAnimation();
         }
         animator.createAnimation(failTweenAnimation);
-        failTweenAnimation.restart(character.getX(), character.getY(), screenSize.WIDTH / 2 - character.getWidth() / 2, screenSize.HEIGHT, );
+        failTweenAnimation.restart(character.getX(), character.getY(), screenSize.WIDTH / 2 - character.getWidth() / 2, screenSize.HEIGHT, CHARACTER_FAIL_SPEED);
+        failTweenAnimation.start();
     }
 
     private void onBonusCatched(final TileSprite tileWithBonus) {
@@ -410,26 +429,14 @@ public class GameScreen implements Screen, OnTouchListener{
         character.setRotateAngle(rotateAngle);
     }
 
-    private void moveCharacterUpDown() {
-        final float halfWidth = screenSize.WIDTH / 2;
-        final float distance = halfWidth - CHARACTER_X_OFFSET;
-        final float halfCharacterWidth = character.getWidth() / 2;
-        if (character.getX() + halfCharacterWidth <= halfWidth) {
-            final float offset = ((character.getX() - CHARACTER_X_OFFSET) / distance) * CHARACTER_MAX_UP;
-            characterTween.setY(CHARACTER_Y_POSITION - offset);
-        } else {
-            characterTween.setY(CHARACTER_Y_POSITION - CHARACTER_MAX_UP + ((character.getX() + character.getWidth() - halfWidth) / distance) * CHARACTER_MAX_UP);
-        }
-    }
-
-    boolean characterIsReachedLeftSprite() {
+    private boolean characterIsReachedLeftSprite() {
         if (character.getX() <= CHARACTER_X_OFFSET + 1) {
             return true;
         }
         return false;
     }
 
-    boolean characterIsReachedRightSprite() {
+    private boolean characterIsReachedRightSprite() {
         if (character.getX() + character.getWidth() >= screenSize.WIDTH - CHARACTER_X_OFFSET - 1) {
             return true;
         }
@@ -442,14 +449,16 @@ public class GameScreen implements Screen, OnTouchListener{
             final TileSprite tileSprite = tileSprites.get(i);
             if (characterIsReachedLeftSprite()) {
                 if (tileSprite.getPosition() == TileEntity.Position.LEFT) {
-                    if (tileSprite.getY() <= characterMiddle && tileSprite.getY() + TILE_HEIGHT >= characterMiddle) {
+                    final float currentTileMiddle = tileSprite.getY() + tileSprite.getHeight() * 0.5f;
+                    if (characterMiddle <= currentTileMiddle && characterMiddle >= tileSprite.getY()) {
                         return tileSprite;
                     }
                 }
             }
             if (characterIsReachedRightSprite()) {
                 if (tileSprite.getPosition() == TileEntity.Position.RIGHT) {
-                    if (tileSprite.getY() <= characterMiddle && tileSprite.getY() + TILE_HEIGHT >= characterMiddle) {
+                    final float currentTileMiddle = tileSprite.getY() + tileSprite.getHeight() * 0.5f;
+                    if (characterMiddle <= currentTileMiddle && characterMiddle >= tileSprite.getY()) {
                         return tileSprite;
                     }
                 }
@@ -467,7 +476,9 @@ public class GameScreen implements Screen, OnTouchListener{
     public void render(float delta) {
         renderLayer.render(delta);
         animator.update(delta);
-        moveTiles(delta);
+        if (!isFailedGame && gameIsStarted) {
+            moveTiles(delta);
+        }
         rotateCharacter();
         //moveCharacterUpDown();
         fps.log();
@@ -499,15 +510,22 @@ public class GameScreen implements Screen, OnTouchListener{
     }
 
     @Override
-    public void onTouchDown(float xPos, float yPos) {
-        if (character.getFlipDirection() == CharacterSprite.FlipDirection.LEFT) {
-            character.changeAnimation(CharacterSprite.FlipDirection.RIGHT);
-            characterTween.copyFromAnimation(characterRightTween);
-            characterTween.start();
-        } else {
-            character.changeAnimation(CharacterSprite.FlipDirection.LEFT);
-            characterTween.copyFromAnimation(characterLeftTween);
-            characterTween.start();
+    public void onTouchDown(final float xPos, final float yPos) {
+        if (!isFailedGame) {
+            if (gameIsStarted) {
+                if (character.getFlipDirection() == CharacterSprite.FlipDirection.LEFT) {
+                    character.changeAnimation(CharacterSprite.FlipDirection.RIGHT);
+                    characterTween.copyFromAnimation(characterRightTween);
+                    characterTween.start();
+                } else {
+                    character.changeAnimation(CharacterSprite.FlipDirection.LEFT);
+                    characterTween.copyFromAnimation(characterLeftTween);
+                    characterTween.start();
+                }
+            }
+            if (!gameIsStarted) {
+                gameIsStarted = true;
+            }
         }
     }
 

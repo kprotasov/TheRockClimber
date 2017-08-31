@@ -28,7 +28,7 @@ public class MainActivity extends Activity{
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
         videoView = (VideoView)findViewById(R.id.videoView);
-        final String videoPath =  "android.resource://" + getPackageName() + "/" + R.raw.background_video_2;
+        final String videoPath =  "android.resource://" + getPackageName() + "/" + R.raw.background_video;
         final Uri videoUri = Uri.parse(videoPath);
 
         videoView.setVideoURI(videoUri);
