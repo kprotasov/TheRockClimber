@@ -15,7 +15,7 @@ public class DistanceFontCreator {
 
 	private static final String FONT = "fonts/Lemonada-Regular.ttf";
 	private static final int FONT_SIZE = 20;
-	private static final Color FONT_COLOR = Color.valueOf("ffffff");
+	private static final Color FONT_COLOR = Color.valueOf("455060");//Color.valueOf("ffffff");
 	private static final Color BORDER_COLOR = Color.valueOf("132338");
 
 	public static BitmapFont createFont() {

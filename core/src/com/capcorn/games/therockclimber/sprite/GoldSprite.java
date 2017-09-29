@@ -1,7 +1,6 @@
 package com.capcorn.games.therockclimber.sprite;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.capcorn.game.engine.sprite.Sprite;
 
 /**
  * User: kprotasov
@@ -9,18 +8,23 @@ import com.capcorn.game.engine.sprite.Sprite;
  * Time: 17:54
  */
 
-public class GoldSprite extends Sprite {
+public class GoldSprite extends BonusSprite {
+
+    private static final BonusType GOLD_BONUS_TYPE = BonusType.GOLD;
 
     public GoldSprite() {
         super();
+        setType(GOLD_BONUS_TYPE);
     }
 
-    public GoldSprite(TextureRegion textureRegion, float x, float y, float width, float height) {
+    public GoldSprite(final TextureRegion textureRegion, final float x, final float y, final float width, final float height) {
         super(textureRegion, x, y, width, height);
+        setType(GOLD_BONUS_TYPE);
     }
 
-    public GoldSprite(TextureRegion textureRegion, float x, float y) {
+    public GoldSprite(final TextureRegion textureRegion, final float x, final float y) {
         super(textureRegion, x, y);
+        setType(GOLD_BONUS_TYPE);
     }
 
 }

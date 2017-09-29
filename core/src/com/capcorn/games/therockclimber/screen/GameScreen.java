@@ -17,6 +17,7 @@ import com.capcorn.game.engine.utils.AccelerationRandom;
 import com.capcorn.game.engine.utils.BinaryRandom;
 import com.capcorn.game.engine.utils.PositionUtils;
 import com.capcorn.games.therockclimber.creator.TileCreator;
+import com.capcorn.games.therockclimber.effects.CameraShakeEffect;
 import com.capcorn.games.therockclimber.entity.TileEntity;
 import com.capcorn.games.therockclimber.font.DistanceFontCreator;
 import com.capcorn.games.therockclimber.font.FontUtils;
@@ -66,6 +67,7 @@ public class GameScreen implements Screen, OnTouchListener{
     private final ObjectPool pool;
     private final Animator animator;
     private final BitmapFont gameFont;
+    private CameraShakeEffect cameraShakeEffect;
 
     private TextSprite distanceText;
     private int distance = 0;
@@ -148,6 +150,8 @@ public class GameScreen implements Screen, OnTouchListener{
             }
             animator.createAnimation(characterTween);
 
+            cameraShakeEffect = new CameraShakeEffect(camera.position.x, camera.position.y);
+
             renderLayer.addAnimatedSprite(character, true, CHARACTER_LAYER);
 
             pool.create(TileSprite.class, HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
@@ -162,7 +166,7 @@ public class GameScreen implements Screen, OnTouchListener{
             renderLayer.addTextSprite(distanceText, TEXT_LAYER);
             moneyText = new TextSprite("0", gameFont, screenSize.WIDTH - FontUtils.getFontWidth(gameFont, "0") - 50, 30);
             renderLayer.addTextSprite(moneyText, TEXT_LAYER);
-        }catch (Exception e) {
+        }catch (final Exception e) {
             e.printStackTrace();
         }
     }
@@ -176,8 +180,6 @@ public class GameScreen implements Screen, OnTouchListener{
                     final float currentYPosition = screenSize.HEIGHT - (y + 1) * TILE_HEIGHT;
                     if (x == 0) {
                         final float leftXPosition = - TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
-                        /*tileSprite = TileSprite.createTileSprite(leftXPosition, screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT, tiles.get(i).getType(),
-                                TileEntity.Position.LEFT, pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);*/
                         tileSprite = new TileSprite();
                         tileSprite.setTextureRegion(assetsLoader.getWhiteTileRightTextureRegion());
                         tileSprite.setX(leftXPosition);
@@ -188,8 +190,6 @@ public class GameScreen implements Screen, OnTouchListener{
                         tileSprite.setHeight(TILE_HEIGHT);
                     } else {
                         final float rightXPosition = (screenSize.WIDTH - TILE_WIDTH) + TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
-                        /*tileSprite = TileSprite.createTileSprite(rightXPosition, screenSize.HEIGHT - TILE_HEIGHT - y * TILE_HEIGHT, tiles.get(i).getType(),
-                                TileEntity.Position.RIGHT, pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);*/
                         tileSprite = new TileSprite();
                         tileSprite.setTextureRegion(assetsLoader.getWhiteTileLeftTextureRegion());
                         tileSprite.setX(rightXPosition);
@@ -299,6 +299,8 @@ public class GameScreen implements Screen, OnTouchListener{
         animator.createAnimation(failTweenAnimation);
         failTweenAnimation.restart(character.getX(), character.getY(), screenSize.WIDTH / 2 - character.getWidth() / 2, screenSize.HEIGHT, CHARACTER_FAIL_SPEED);
         failTweenAnimation.start();
+
+        cameraShakeEffect.shake(5.0f, 0.15f);
     }
 
     private void onBonusCatched(final TileSprite tileWithBonus) {
@@ -325,7 +327,7 @@ public class GameScreen implements Screen, OnTouchListener{
                     moneyText.setText(moneyCount + "");
                     moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
                     renderLayer.removeSprite(goldSprite);
-                    //pool.release(goldSprite);
+                    pool.release(goldSprite);
                 }
             });
             renderLayer.addSprite(goldSprite, true, TILE_LAYER);
@@ -444,21 +446,23 @@ public class GameScreen implements Screen, OnTouchListener{
     }
 
     private TileSprite getTileSpriteUnderCharacter() {
-        final float characterMiddle = character.getY() + CHARACTER_HEIGHT * 0.5f;
+        final float partOfCharacter = CHARACTER_HEIGHT * 0.3f;
+        final float characterStart = character.getY() + partOfCharacter;
+        final float characterEnd = character.getY() + character.getHeight() - partOfCharacter;
         for (int i = 0, length = tileSprites.size(); i < length; i++) {
             final TileSprite tileSprite = tileSprites.get(i);
+            final float tileStart = tileSprite.getY();
+            final float tileEnd = tileSprite.getY() + tileSprite.getHeight();
             if (characterIsReachedLeftSprite()) {
                 if (tileSprite.getPosition() == TileEntity.Position.LEFT) {
-                    final float currentTileMiddle = tileSprite.getY() + tileSprite.getHeight() * 0.5f;
-                    if (characterMiddle <= currentTileMiddle && characterMiddle >= tileSprite.getY()) {
+                    if (characterEnd < tileEnd && characterStart > tileStart) {
                         return tileSprite;
                     }
                 }
             }
             if (characterIsReachedRightSprite()) {
                 if (tileSprite.getPosition() == TileEntity.Position.RIGHT) {
-                    final float currentTileMiddle = tileSprite.getY() + tileSprite.getHeight() * 0.5f;
-                    if (characterMiddle <= currentTileMiddle && characterMiddle >= tileSprite.getY()) {
+                    if (characterEnd < tileEnd && characterStart > tileStart) {
                         return tileSprite;
                     }
                 }
@@ -473,7 +477,9 @@ public class GameScreen implements Screen, OnTouchListener{
     }
 
     @Override
-    public void render(float delta) {
+    public void render(final float delta) {
+        cameraShakeEffect.update(delta, camera);
+
         renderLayer.render(delta);
         animator.update(delta);
         if (!isFailedGame && gameIsStarted) {
