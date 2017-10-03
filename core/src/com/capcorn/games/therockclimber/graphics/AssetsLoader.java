@@ -10,7 +10,9 @@ import java.util.Random;
 import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.CHARACTER;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.DIALOG_BUTTON;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.GOLD;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.LOOSING_GAME_DIALOG_BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RAM;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE;
 
@@ -32,6 +34,8 @@ public class AssetsLoader {
 
     private Texture backgroundTexture;
     private TextureRegion backgroundTextureRegion;
+    private TextureRegion loosingGameBackground;
+    private TextureRegion dialogButton;
 
     private Texture ramTexture;
     private TextureRegion ramTextureRegion;
@@ -59,6 +63,8 @@ public class AssetsLoader {
         manager.load(BACKGROUND.getName(), Texture.class);
         manager.load(BLACK_TILE_ATLAS.getName(), Texture.class);
         manager.load(WHITE_TILE.getName(), Texture.class);
+        manager.load(LOOSING_GAME_DIALOG_BACKGROUND.getName(), Texture.class);
+        manager.load(DIALOG_BUTTON.getName(), Texture.class);
         manager.load(RAM.getName(), Texture.class);
         manager.load(GOLD.getName(), Texture.class);
         return manager;
@@ -77,6 +83,12 @@ public class AssetsLoader {
         whiteTileTexture = manager.get(WHITE_TILE.getName());
         whiteTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        Texture loosingGameBackgroundTexture = manager.get(LOOSING_GAME_DIALOG_BACKGROUND.getName());
+        loosingGameBackgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        Texture dialogButtonTexture = manager.get(DIALOG_BUTTON.getName());
+        dialogButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
         characterRightAnimation = createCharacterTextureRegionRight();
         characterLeftAnimation = createCharacterTextureRegionLeft();
 
@@ -92,6 +104,8 @@ public class AssetsLoader {
         createWhiteTileRightTextureRegion();
         createRamTextureRegion();
         createGoldTextureRegion();
+        createLoosingGameBackground(loosingGameBackgroundTexture);
+        createDialogButton(dialogButtonTexture);
     }
 
     public void dispose() {
@@ -105,6 +119,8 @@ public class AssetsLoader {
         manager.unload(BLACK_TILE_ATLAS.getName());
         manager.unload(WHITE_TILE.getName());
         manager.unload(RAM.getName());
+        manager.unload(LOOSING_GAME_DIALOG_BACKGROUND.getName());
+        manager.unload(DIALOG_BUTTON.getName());
         manager.unload(GOLD.getName());
         manager.dispose();
     }
@@ -145,6 +161,14 @@ public class AssetsLoader {
 
     public TextureRegion getRamTextureRegion() {
         return ramTextureRegion;
+    }
+
+    public TextureRegion getLoosingGameBackgroundTextureRegion() {
+        return loosingGameBackground;
+    }
+
+    public TextureRegion getDialogButton() {
+        return dialogButton;
     }
 
     private Animation createCharacterTextureRegionRight() {
@@ -219,6 +243,17 @@ public class AssetsLoader {
     private void createRamTextureRegion() {
         ramTextureRegion = new TextureRegion(ramTexture, 0, 0, GOLD.getWidth(), GOLD.getHeight());
         ramTextureRegion.flip(false, true);
+    }
+
+    private void createLoosingGameBackground(final Texture loosingGameBackgroundTexture) {
+        loosingGameBackground = new TextureRegion(loosingGameBackgroundTexture, 0, 0, LOOSING_GAME_DIALOG_BACKGROUND.getWidth(),
+                LOOSING_GAME_DIALOG_BACKGROUND.getHeight());
+        loosingGameBackground.flip(false, true);
+    }
+
+    private void createDialogButton(final Texture dialogButtonTexture) {
+        dialogButton = new TextureRegion(dialogButtonTexture, 0, 0, DIALOG_BUTTON.getWidth(), DIALOG_BUTTON.getHeight());
+        dialogButton.flip(false, true);
     }
 
 }
