@@ -28,7 +28,9 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * Created by kprotasov on 26.04.2016.
+ * User: kprotasov
+ * Date: 26.04.2016
+ * Time: 17:45
  */
 public class RenderLayer {
 
@@ -52,6 +54,8 @@ public class RenderLayer {
     private Color[] backgroundColors = new Color[4];
 
     public RenderLayer(final OrthographicCamera camera, final Color baseColor, final float gameWidth, final float gameHeight) {
+        this.camera = camera;
+
         spritesList = new ArrayList<BaseEntity>();
         layersList = new ArrayList<Integer>();
         removedSpritesList = new ArrayList<SpriteBase>();
@@ -62,13 +66,10 @@ public class RenderLayer {
         setColor(baseColor);
 
         spriteBatch = new SpriteBatch();
-        spriteBatch.setProjectionMatrix(camera.combined);
 
         polygonSpriteBatch = new PolygonSpriteBatch();
-        polygonSpriteBatch.setProjectionMatrix(camera.combined);
 
         shapeRenderer = new ShapeRenderer();
-        shapeRenderer.setProjectionMatrix(camera.combined);
     }
 
     public void setColor(final Color color) {
@@ -95,6 +96,11 @@ public class RenderLayer {
         runTime += delta;
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        spriteBatch.setProjectionMatrix(camera.combined);
+        polygonSpriteBatch.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         shapeRenderer.rect(0, 0, gameWidth, gameHeight, backgroundColors[0], backgroundColors[1], backgroundColors[2], backgroundColors[3]);

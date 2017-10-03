@@ -11,10 +11,13 @@ import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.CH
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.GOLD;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RAM;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE;
 
 /**
- * Created by kprotasov on 04.06.2017.
+ * User: kprotasov
+ * Date: 04.06.2017
+ * Time: 15:53
  */
 
 public class AssetsLoader {
@@ -26,8 +29,12 @@ public class AssetsLoader {
     private Texture characterTexture;
     private Animation characterRightAnimation;
     private Animation characterLeftAnimation;
+
     private Texture backgroundTexture;
     private TextureRegion backgroundTextureRegion;
+
+    private Texture ramTexture;
+    private TextureRegion ramTextureRegion;
 
     private Texture blackTileTexture;
     private TextureRegion[] blackTileLeftTextureRegions = new TextureRegion[2];
@@ -52,6 +59,7 @@ public class AssetsLoader {
         manager.load(BACKGROUND.getName(), Texture.class);
         manager.load(BLACK_TILE_ATLAS.getName(), Texture.class);
         manager.load(WHITE_TILE.getName(), Texture.class);
+        manager.load(RAM.getName(), Texture.class);
         manager.load(GOLD.getName(), Texture.class);
         return manager;
     }
@@ -75,10 +83,14 @@ public class AssetsLoader {
         goldTexture = manager.get(GOLD.getName());
         goldTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        ramTexture = manager.get(RAM.getName());
+        ramTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
         createBackgroundTextureRegion();
         createBlackTileTextureRegions();
         createWhiteTileLeftTextureRegion();
         createWhiteTileRightTextureRegion();
+        createRamTextureRegion();
         createGoldTextureRegion();
     }
 
@@ -92,6 +104,7 @@ public class AssetsLoader {
         manager.unload(BACKGROUND.getName());
         manager.unload(BLACK_TILE_ATLAS.getName());
         manager.unload(WHITE_TILE.getName());
+        manager.unload(RAM.getName());
         manager.unload(GOLD.getName());
         manager.dispose();
     }
@@ -128,6 +141,10 @@ public class AssetsLoader {
 
     public TextureRegion getGoldTextureRegion() {
         return goldTextureRegion;
+    }
+
+    public TextureRegion getRamTextureRegion() {
+        return ramTextureRegion;
     }
 
     private Animation createCharacterTextureRegionRight() {
@@ -197,6 +214,11 @@ public class AssetsLoader {
     private void createGoldTextureRegion() {
         goldTextureRegion = new TextureRegion(goldTexture, 0, 0, GOLD.getWidth(), GOLD.getHeight());
         goldTextureRegion.flip(false, true);
+    }
+
+    private void createRamTextureRegion() {
+        ramTextureRegion = new TextureRegion(ramTexture, 0, 0, GOLD.getWidth(), GOLD.getHeight());
+        ramTextureRegion.flip(false, true);
     }
 
 }

@@ -22,7 +22,7 @@ public class TileSprite extends Sprite {
         return position;
     }
 
-    public void setPosition(TileEntity.Position position) {
+    public void setPosition(final TileEntity.Position position) {
         this.position = position;
     }
 
@@ -30,7 +30,7 @@ public class TileSprite extends Sprite {
         return type;
     }
 
-    public void setType(TileEntity.Type type) {
+    public void setType(final TileEntity.Type type) {
         this.type = type;
     }
 
@@ -38,11 +38,11 @@ public class TileSprite extends Sprite {
         super();
     }
 
-    public TileSprite(TextureRegion textureRegion, float x, float y, float width, float height) {
+    public TileSprite(final TextureRegion textureRegion, final float x, final float y, final float width, final float height) {
         super(textureRegion, x, y, width, height);
     }
 
-    public TileSprite(TextureRegion textureRegion, float x, float y) {
+    public TileSprite(final TextureRegion textureRegion, final float x, final float y) {
         super(textureRegion, x, y);
     }
 
@@ -50,7 +50,7 @@ public class TileSprite extends Sprite {
         return bonus;
     }
 
-    public void setBonus(BonusSprite bonus) {
+    public void setBonus(final BonusSprite bonus) {
         this.bonus = bonus;
     }
 

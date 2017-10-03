@@ -10,6 +10,7 @@ import com.capcorn.game.engine.sprite.Sprite;
 
 public enum BonusType {
 
-    GOLD;
+    GOLD,
+    RAM;
 
 }

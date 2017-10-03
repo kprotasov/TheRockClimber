@@ -11,20 +11,26 @@ import com.capcorn.game.engine.sprite.Sprite;
 
 public class BonusSprite extends Sprite {
 
+    private BonusType type;
+
     public BonusSprite() {
         super();
     }
 
-    public BonusSprite(TextureRegion textureRegion, float x, float y, float width, float height) {
+    public BonusSprite(final TextureRegion textureRegion, final float x, final float y, final float width, final float height) {
         super(textureRegion, x, y, width, height);
     }
 
-    public BonusSprite(TextureRegion textureRegion, float x, float y) {
+    public BonusSprite(final TextureRegion textureRegion, final float x, final float y) {
         super(textureRegion, x, y);
     }
 
+    public void setType(final BonusType type) {
+        this.type = type;
+    }
+
     public BonusType getType() {
-        return BonusType.GOLD;
+        return type;
     }
 
 }

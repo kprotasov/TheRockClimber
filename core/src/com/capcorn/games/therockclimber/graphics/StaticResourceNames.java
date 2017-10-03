@@ -13,6 +13,7 @@ public enum StaticResourceNames {
     //WHITE_TILE("white_tile_4.png", 200, 480),
     BLACK_TILE_ATLAS("black_tile_4_atlas.png", 400, 480),
     WHITE_TILE("white_tile_3.png", 200, 480),
+    RAM("ram.png", 300, 252),
     GOLD("gold.png", 85, 85);
 
     private final String name;
