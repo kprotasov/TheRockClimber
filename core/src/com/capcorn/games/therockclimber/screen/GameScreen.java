@@ -25,9 +25,11 @@ import com.capcorn.games.therockclimber.graphics.AssetsLoader;
 import com.capcorn.games.therockclimber.input.InputHandler;
 import com.capcorn.games.therockclimber.input.OnTouchListener;
 import com.capcorn.games.therockclimber.settings.Settings;
+import com.capcorn.games.therockclimber.settings.store.BestScoreStore;
 import com.capcorn.games.therockclimber.sprite.BonusSprite;
 import com.capcorn.games.therockclimber.sprite.CharacterSprite;
 import com.capcorn.games.therockclimber.sprite.GoldSprite;
+import com.capcorn.games.therockclimber.sprite.LoosingGameDialog;
 import com.capcorn.games.therockclimber.sprite.TileSprite;
 
 import java.util.ArrayList;
@@ -68,6 +70,7 @@ public class GameScreen implements Screen, OnTouchListener{
     private final Animator animator;
     private final BitmapFont gameFont;
     private CameraShakeEffect cameraShakeEffect;
+    private BestScoreStore bestScoreStore;
 
     private TextSprite distanceText;
     private int distance = 0;
@@ -79,6 +82,7 @@ public class GameScreen implements Screen, OnTouchListener{
     private TweenAnimation characterTween;
     private CharacterSprite character;
     private Sprite backgroundSprite;
+    private LoosingGameDialog loosingGameDialog;
 
     private final TileCreator tileCreator;
     private ArrayList<TileEntity> tiles;
@@ -93,6 +97,7 @@ public class GameScreen implements Screen, OnTouchListener{
     private static final int BONUS_LAYER = 2;
     private static final int CHARACTER_LAYER = 3;
     private static final int TEXT_LAYER = 4;
+    private static final int LOOSING_GAME_DIALOG_LAYER = 5;
 
     public GameScreen(final AssetsLoader assetsLoader) {
         this.assetsLoader = assetsLoader;
@@ -116,6 +121,8 @@ public class GameScreen implements Screen, OnTouchListener{
         final Color topColor = new Color(70 / 255.0f, 168 / 255.0f, 255 / 255.0f, 1);
         final Color bottomColor = new Color(53 / 255.0f, 255 / 255.0f, 205 / 255.0f, 1);
         renderLayer.setColor(topColor, topColor, bottomColor, bottomColor);
+
+        bestScoreStore = new BestScoreStore();
 
         pool = new ObjectPool();
         initGameObjects();
@@ -166,7 +173,9 @@ public class GameScreen implements Screen, OnTouchListener{
             renderLayer.addTextSprite(distanceText, TEXT_LAYER);
             moneyText = new TextSprite("0", gameFont, screenSize.WIDTH - FontUtils.getFontWidth(gameFont, "0") - 50, 30);
             renderLayer.addTextSprite(moneyText, TEXT_LAYER);
-        }catch (final Exception e) {
+
+            loosingGameDialog = new LoosingGameDialog(assetsLoader);
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -301,6 +310,25 @@ public class GameScreen implements Screen, OnTouchListener{
         failTweenAnimation.start();
 
         cameraShakeEffect.shake(5.0f, 0.15f);
+
+
+        final int bestStoredScore = bestScoreStore.getBestScore();
+        if (distance > bestStoredScore) {
+            bestScoreStore.setBestScore(distance);
+        }
+
+        createLoosingGameDialog();
+        Gdx.app.log("CurrentBestScore", "currentBestScore " + bestScoreStore.getBestScore());
+    }
+
+    private void createLoosingGameDialog() {
+        loosingGameDialog.setWidth(450);
+        loosingGameDialog.setHeight(275);
+        loosingGameDialog.setX(screenSize.WIDTH / 2 - loosingGameDialog.getWidth() / 2);
+        loosingGameDialog.setY(screenSize.HEIGHT / 2 - loosingGameDialog.getHeight() / 2);
+
+        loosingGameDialog.initDialog(distance, bestScoreStore.getBestScore());
+        loosingGameDialog.addOnScreen(renderLayer, LOOSING_GAME_DIALOG_LAYER);
     }
 
     private void onBonusCatched(final TileSprite tileWithBonus) {
