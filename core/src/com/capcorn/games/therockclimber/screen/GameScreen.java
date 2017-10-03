@@ -27,6 +27,7 @@ import com.capcorn.games.therockclimber.settings.Settings;
 import com.capcorn.games.therockclimber.sprite.BonusSprite;
 import com.capcorn.games.therockclimber.sprite.CharacterSprite;
 import com.capcorn.games.therockclimber.sprite.GoldSprite;
+import com.capcorn.games.therockclimber.sprite.LoosingGameDialog;
 import com.capcorn.games.therockclimber.sprite.TileSprite;
 
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class GameScreen implements Screen, OnTouchListener{
     private TweenAnimation characterTween;
     private CharacterSprite character;
     private Sprite backgroundSprite;
+    private LoosingGameDialog loosingGameDialog;
 
     private final TileCreator tileCreator;
     private ArrayList<TileEntity> tiles;
@@ -91,6 +93,7 @@ public class GameScreen implements Screen, OnTouchListener{
     private static final int BONUS_LAYER = 2;
     private static final int CHARACTER_LAYER = 3;
     private static final int TEXT_LAYER = 4;
+    private static final int LOOSING_GAME_DIALOG_LAYER = 5;
 
     public GameScreen(final AssetsLoader assetsLoader) {
         this.assetsLoader = assetsLoader;
@@ -162,6 +165,8 @@ public class GameScreen implements Screen, OnTouchListener{
             renderLayer.addTextSprite(distanceText, TEXT_LAYER);
             moneyText = new TextSprite("0", gameFont, screenSize.WIDTH - FontUtils.getFontWidth(gameFont, "0") - 50, 30);
             renderLayer.addTextSprite(moneyText, TEXT_LAYER);
+
+            loosingGameDialog = new LoosingGameDialog(assetsLoader);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -299,6 +304,8 @@ public class GameScreen implements Screen, OnTouchListener{
         animator.createAnimation(failTweenAnimation);
         failTweenAnimation.restart(character.getX(), character.getY(), screenSize.WIDTH / 2 - character.getWidth() / 2, screenSize.HEIGHT, CHARACTER_FAIL_SPEED);
         failTweenAnimation.start();
+
+
     }
 
     private void onBonusCatched(final TileSprite tileWithBonus) {

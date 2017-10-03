@@ -11,6 +11,7 @@ import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.CH
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.GOLD;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.LOOSING_GAME_DIALOG_BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE;
 
 /**
@@ -28,6 +29,7 @@ public class AssetsLoader {
     private Animation characterLeftAnimation;
     private Texture backgroundTexture;
     private TextureRegion backgroundTextureRegion;
+    private TextureRegion loosingGameBackground;
 
     private Texture blackTileTexture;
     private TextureRegion[] blackTileLeftTextureRegions = new TextureRegion[2];
@@ -52,6 +54,7 @@ public class AssetsLoader {
         manager.load(BACKGROUND.getName(), Texture.class);
         manager.load(BLACK_TILE_ATLAS.getName(), Texture.class);
         manager.load(WHITE_TILE.getName(), Texture.class);
+        manager.load(LOOSING_GAME_DIALOG_BACKGROUND.getName(), Texture.class);
         manager.load(GOLD.getName(), Texture.class);
         return manager;
     }
@@ -69,6 +72,9 @@ public class AssetsLoader {
         whiteTileTexture = manager.get(WHITE_TILE.getName());
         whiteTileTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        Texture loosingGameBackgroundTexture = manager.get(LOOSING_GAME_DIALOG_BACKGROUND.getName());
+        loosingGameBackgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
         characterRightAnimation = createCharacterTextureRegionRight();
         characterLeftAnimation = createCharacterTextureRegionLeft();
 
@@ -80,6 +86,7 @@ public class AssetsLoader {
         createWhiteTileLeftTextureRegion();
         createWhiteTileRightTextureRegion();
         createGoldTextureRegion();
+        createLoosingGameBackground(loosingGameBackgroundTexture);
     }
 
     public void dispose() {
@@ -92,6 +99,7 @@ public class AssetsLoader {
         manager.unload(BACKGROUND.getName());
         manager.unload(BLACK_TILE_ATLAS.getName());
         manager.unload(WHITE_TILE.getName());
+        manager.unload(LOOSING_GAME_DIALOG_BACKGROUND.getName());
         manager.unload(GOLD.getName());
         manager.dispose();
     }
@@ -128,6 +136,10 @@ public class AssetsLoader {
 
     public TextureRegion getGoldTextureRegion() {
         return goldTextureRegion;
+    }
+
+    public TextureRegion getLoosingGameBackgroundTextureRegion() {
+        return loosingGameBackground;
     }
 
     private Animation createCharacterTextureRegionRight() {
@@ -197,6 +209,12 @@ public class AssetsLoader {
     private void createGoldTextureRegion() {
         goldTextureRegion = new TextureRegion(goldTexture, 0, 0, GOLD.getWidth(), GOLD.getHeight());
         goldTextureRegion.flip(false, true);
+    }
+
+    private void createLoosingGameBackground(final Texture loosingGameBackgroundTexture) {
+        loosingGameBackground = new TextureRegion(loosingGameBackgroundTexture, 0, 0, LOOSING_GAME_DIALOG_BACKGROUND.getWidth(),
+                LOOSING_GAME_DIALOG_BACKGROUND.getHeight());
+        loosingGameBackground.flip(false, true);
     }
 
 }
