@@ -19,12 +19,18 @@ public class DistanceFontCreator {
 	private static final Color BORDER_COLOR = Color.valueOf("132338");
 
 	public static BitmapFont createFont(final int fontSize) {
+		return createFont(fontSize, true);
+	}
+
+	public static BitmapFont createFont(final int fontSize, final boolean hasBorder) {
 		final FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT));
 		final FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		parameter.size = fontSize;
 		parameter.color = FONT_COLOR;
-		parameter.borderColor = BORDER_COLOR;
-		parameter.borderWidth = 0.8f;
+		if (hasBorder) {
+			parameter.borderColor = BORDER_COLOR;
+			parameter.borderWidth = 0.8f;
+		}
 		parameter.minFilter = Texture.TextureFilter.Linear;
 		parameter.magFilter = Texture.TextureFilter.Linear;
 		parameter.flip = true;

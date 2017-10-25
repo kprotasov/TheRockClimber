@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.capcorn.game.engine.core.entity.AnimatedSpriteEntity;
 import com.capcorn.game.engine.core.entity.BaseEntity;
@@ -53,6 +55,8 @@ public class RenderLayer {
     private BitmapFont font;
     private Color[] backgroundColors = new Color[4];
 
+    private final ShaderProgram motionBlurShaderProgram;
+
     public RenderLayer(final OrthographicCamera camera, final Color baseColor, final float gameWidth, final float gameHeight) {
         this.camera = camera;
 
@@ -66,6 +70,9 @@ public class RenderLayer {
         setColor(baseColor);
 
         spriteBatch = new SpriteBatch();
+
+        motionBlurShaderProgram = new ShaderProgram(Gdx.files.internal("vertex_test.glsl"),Gdx.files.internal("fragment_test.glsl"));
+        ShaderProgram.pedantic = false;
 
         polygonSpriteBatch = new PolygonSpriteBatch();
 
@@ -98,10 +105,13 @@ public class RenderLayer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         spriteBatch.setProjectionMatrix(camera.combined);
+
         polygonSpriteBatch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        applyBlur();
 
         shapeRenderer.rect(0, 0, gameWidth, gameHeight, backgroundColors[0], backgroundColors[1], backgroundColors[2], backgroundColors[3]);
         shapeRenderer.end();
@@ -122,11 +132,13 @@ public class RenderLayer {
                 if (entity.getLayer() == layer) {
                     if (entity instanceof SpriteEntity) {
                         spriteBatch.begin();
+                        applyBlur();
                         drawSprite(((SpriteEntity) entity).getSprite(), entity.getBlending());
                         spriteBatch.end();
                     }
                     if (entity instanceof AnimatedSpriteEntity) {
                         spriteBatch.begin();
+                        applyBlur();
                         drawAnimatedSprite(((AnimatedSpriteEntity) entity).getSprite(), entity.getBlending(), delta);
                         spriteBatch.end();
                     }
@@ -140,6 +152,7 @@ public class RenderLayer {
                     }
                     if (entity instanceof TextEntity) {
                         spriteBatch.begin();
+                        applyBlur();
                         drawTextSprite(((TextEntity)entity).getSprite());
                         spriteBatch.end();
                     }
@@ -182,6 +195,12 @@ public class RenderLayer {
                 shapeRenderer.end();
                 break;
         }
+    }
+
+    private void applyBlur() {
+        /*motionBlurShaderProgram.setUniformf("dir", 0.0f, 0.1f);
+        motionBlurShaderProgram.setUniformf("radius", 1.0f);
+        spriteBatch.setShader(motionBlurShaderProgram);*/
     }
 
     private void drawTextSprite(final TextSprite sprite) {

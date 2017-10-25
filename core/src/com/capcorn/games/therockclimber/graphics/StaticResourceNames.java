@@ -11,12 +11,14 @@ public enum StaticResourceNames {
     BACKGROUND("background.png", 1000, 1779),
     //BLACK_TILE_ATLAS("black_tile_atlas.png", 400, 480),
     //WHITE_TILE("white_tile_4.png", 200, 480),
-    BLACK_TILE_ATLAS("black_tile_4_atlas.png", 400, 480),
-    WHITE_TILE("white_tile_3.png", 200, 480),
+    BLACK_TILE_ATLAS("black_tile_atlas.png", 800, 480),
+    WHITE_TILE_ATLAS("white_tile_atlas.png", 800, 480),
+    WHITE_TILE("white_tile_2.png", 200, 480),
     RAM("ram.png", 300, 252),
     LOOSING_GAME_DIALOG_BACKGROUND("loosing_game_background.png", 900, 550),
     DIALOG_BUTTON("dialog_button.png", 200, 50),
-    GOLD("gold.png", 85, 85);
+    GOLD("gold.png", 85, 85),
+    BRILLIANCE("brilliance.png", 85, 85);
 
     private final String name;
     private final int width;

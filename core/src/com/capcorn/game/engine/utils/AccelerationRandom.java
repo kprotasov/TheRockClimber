@@ -37,11 +37,12 @@ public class AccelerationRandom {
 	// возвращает true с вероятностью percent
 	// вероятность увеличивается
 	public boolean getRandom() {
+
 		if (eventIsReached) {
 			currentPercent = defaultPercent;
 			eventIsReached = false;
 		} else {
-			currentPercent = currentPercent >= maxPercent ? maxPercent : defaultPercent + accelerationSpeed;
+			currentPercent = currentPercent >= maxPercent ? maxPercent : currentPercent + accelerationSpeed;
 		}
 		final int variant = random.nextInt(RANDOM_MAX);
 		if (variant <= currentPercent) {

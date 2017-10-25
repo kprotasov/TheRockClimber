@@ -10,16 +10,7 @@ import com.capcorn.games.therockclimber.graphics.AssetsLoader;
  * Time: 23:31
  */
 
-public class CharacterSprite extends AnimatedSprite {
-
-    private FlipDirection flipDirection = FlipDirection.LEFT;
-    private Animation leftAnimation;
-    private Animation rightAnimation;
-
-    public enum FlipDirection {
-        LEFT,
-        RIGHT;
-    }
+public class CharacterSprite extends DirectedAnimatedSprite {
 
     public CharacterSprite() {
         super();
@@ -33,28 +24,4 @@ public class CharacterSprite extends AnimatedSprite {
         super(animation, x, y, width, height);
     }
 
-    public void setRightAnimation(Animation rightAnimation) {
-        this.rightAnimation = rightAnimation;
-    }
-
-    public void setLeftAnimation(Animation leftAnimation) {
-        this.leftAnimation = leftAnimation;
-    }
-
-    public void changeAnimation(final FlipDirection direction) {
-        switch (direction) {
-            case LEFT:
-                setAnimation(leftAnimation);
-                flipDirection = FlipDirection.LEFT;
-                break;
-            case RIGHT:
-                setAnimation(rightAnimation);
-                flipDirection = FlipDirection.RIGHT;
-                break;
-        }
-    }
-
-    public FlipDirection getFlipDirection() {
-        return flipDirection;
-    }
 }

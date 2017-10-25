@@ -33,4 +33,8 @@ public class BonusSprite extends Sprite {
         return type;
     }
 
+    public int getSelfCoast() {
+        return 0;
+    }
+
 }

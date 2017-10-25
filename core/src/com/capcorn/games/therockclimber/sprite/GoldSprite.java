@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class GoldSprite extends BonusSprite {
 
     private static final BonusType GOLD_BONUS_TYPE = BonusType.GOLD;
+    private static final int SELF_COAST = 1;
 
     public GoldSprite() {
         super();
@@ -25,6 +26,10 @@ public class GoldSprite extends BonusSprite {
     public GoldSprite(final TextureRegion textureRegion, final float x, final float y) {
         super(textureRegion, x, y);
         setType(GOLD_BONUS_TYPE);
+    }
+
+    public int getSelfCoast() {
+        return SELF_COAST;
     }
 
 }

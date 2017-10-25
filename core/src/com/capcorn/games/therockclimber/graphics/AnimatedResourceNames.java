@@ -8,7 +8,8 @@ package com.capcorn.games.therockclimber.graphics;
 
 public enum AnimatedResourceNames {
 
-    CHARACTER("character_001.png", 6, 4, 200, 393);
+    CHARACTER("character.png", 6, 4, 200, 393),
+    STONE("stone_spritesheet.png", 11, 1, 100, 100);
 
     private final String name;
     private final int horizontalCount;

@@ -16,6 +16,8 @@ import com.capcorn.game.engine.sprite.TextSprite;
 import com.capcorn.game.engine.utils.AccelerationRandom;
 import com.capcorn.game.engine.utils.BinaryRandom;
 import com.capcorn.game.engine.utils.PositionUtils;
+import com.capcorn.game.engine.utils.ProbabilityRandom;
+import com.capcorn.games.therockclimber.creator.BonusCreator;
 import com.capcorn.games.therockclimber.creator.TileCreator;
 import com.capcorn.games.therockclimber.effects.CameraShakeEffect;
 import com.capcorn.games.therockclimber.entity.TileEntity;
@@ -27,9 +29,14 @@ import com.capcorn.games.therockclimber.input.OnTouchListener;
 import com.capcorn.games.therockclimber.settings.Settings;
 import com.capcorn.games.therockclimber.settings.store.BestScoreStore;
 import com.capcorn.games.therockclimber.sprite.BonusSprite;
+import com.capcorn.games.therockclimber.sprite.BonusType;
+import com.capcorn.games.therockclimber.sprite.BrillianceSprite;
 import com.capcorn.games.therockclimber.sprite.CharacterSprite;
+import com.capcorn.games.therockclimber.sprite.ClickToStartTextSprite;
+import com.capcorn.games.therockclimber.sprite.DirectedAnimatedSprite;
 import com.capcorn.games.therockclimber.sprite.GoldSprite;
 import com.capcorn.games.therockclimber.sprite.LoosingGameDialog;
+import com.capcorn.games.therockclimber.sprite.StoneSprite;
 import com.capcorn.games.therockclimber.sprite.TileSprite;
 
 import java.util.ArrayList;
@@ -40,7 +47,9 @@ import java.util.ArrayList;
  * Time: 17:00
  */
 
-public class GameScreen implements Screen, OnTouchListener{
+public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.OnLoosingDialogActionListener, BonusCreator.OnBonusCahcedListener{
+
+    private static final String CLICK_TO_START_TEXT = "click to start";
 
     private static final float CHARACTER_MAX_UP = 50;
     private static final int CHARACTER_MAX_ROTATION_ANGLE = 20;
@@ -49,12 +58,13 @@ public class GameScreen implements Screen, OnTouchListener{
     private static final int TILE_HEIGHT = 240;
     private static final int TILE_SPEED = 800;
     private static final float CHARACTER_TWEEN_SPEED = 2000.0f;
-    private static final float GOLD_TWEEN_SPEED = 1500.0f;
+    //private static final float GOLD_TWEEN_SPEED = 1500.0f;
     private static int HORIZONTAL_TILE_COUNT;
     private static int VERTICAL_TILE_COUNT;
     private static float CHARACTER_Y_POSITION;
     private static final float CHARACTER_X_OFFSET = 50;
-    private static final float GOLD_SIZE = 50;
+    //private static final float GOLD_SIZE = 50;
+    //private static final float BRILLIANCE_SIZE = 50;
     private static final float CHARACTER_HEIGHT = 196;
     private static final float CHARACTER_FAIL_SPEED = 800.0f;
 
@@ -71,6 +81,8 @@ public class GameScreen implements Screen, OnTouchListener{
     private final BitmapFont gameFont;
     private CameraShakeEffect cameraShakeEffect;
     private BestScoreStore bestScoreStore;
+    private ClickToStartTextSprite clickToStartTextSprite;
+    private BonusCreator bonusCreator;
 
     private TextSprite distanceText;
     private int distance = 0;
@@ -89,15 +101,21 @@ public class GameScreen implements Screen, OnTouchListener{
     private final ArrayList<TileSprite> tileSprites;
     private float tilesStartYPosition = TILE_HEIGHT;
 
-    private AccelerationRandom goldBonusRandom;
+    private StoneSprite createdStoneSprite;
+
     private BinaryRandom binaryRandom;
+    private ProbabilityRandom goldBonusRandom;
+    private ProbabilityRandom brillianceBonusRandom;
+    private ProbabilityRandom stoneRandom;
 
     private static final int BACKGROUND_LAYER = 0;
     private static final int TILE_LAYER = 1;
     private static final int BONUS_LAYER = 2;
     private static final int CHARACTER_LAYER = 3;
-    private static final int TEXT_LAYER = 4;
-    private static final int LOOSING_GAME_DIALOG_LAYER = 5;
+    private static final int SPRITES_LAYER = 4;
+    private static final int TEXT_LAYER = 5;
+    private static final int LOOSING_GAME_DIALOG_LAYER = 6;
+    private static final int CLICK_TO_START_LAYER = 7;
 
     public GameScreen(final AssetsLoader assetsLoader) {
         this.assetsLoader = assetsLoader;
@@ -117,7 +135,7 @@ public class GameScreen implements Screen, OnTouchListener{
         CHARACTER_Y_POSITION = screenSize.HEIGHT - 246;
 
         renderLayer = new RenderLayer(camera, Color.FOREST, screenSize.WIDTH, screenSize.HEIGHT);
-        renderLayer.showLogs(false);
+        renderLayer.showLogs(true);
         final Color topColor = new Color(70 / 255.0f, 168 / 255.0f, 255 / 255.0f, 1);
         final Color bottomColor = new Color(53 / 255.0f, 255 / 255.0f, 205 / 255.0f, 1);
         renderLayer.setColor(topColor, topColor, bottomColor, bottomColor);
@@ -125,12 +143,14 @@ public class GameScreen implements Screen, OnTouchListener{
         bestScoreStore = new BestScoreStore();
 
         pool = new ObjectPool();
-        initGameObjects();
 
         tileCreator = new TileCreator(HORIZONTAL_TILE_COUNT, VERTICAL_TILE_COUNT, pool);
         tiles = tileCreator.createTiles();
         tileSprites = new ArrayList<TileSprite>(HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
 
+        bonusCreator = new BonusCreator(pool, renderLayer, assetsLoader, animator, BONUS_LAYER);
+
+        initGameObjects();
         createDefaultTiles();
     }
 
@@ -165,8 +185,12 @@ public class GameScreen implements Screen, OnTouchListener{
             pool.create(TileEntity.class, HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
             pool.create(BonusSprite.class, 1);
             pool.create(GoldSprite.class, 1);
+            pool.create(BrillianceSprite.class, 1);
+            pool.create(StoneSprite.class, 1);
 
-            goldBonusRandom = new AccelerationRandom(10, 50, 1);
+            goldBonusRandom = new ProbabilityRandom(15);
+            brillianceBonusRandom = new ProbabilityRandom(3);
+            stoneRandom = new ProbabilityRandom(15);
             binaryRandom = new BinaryRandom();
 
             distanceText = new TextSprite("0m", gameFont, 50, 30);
@@ -174,7 +198,12 @@ public class GameScreen implements Screen, OnTouchListener{
             moneyText = new TextSprite("0", gameFont, screenSize.WIDTH - FontUtils.getFontWidth(gameFont, "0") - 50, 30);
             renderLayer.addTextSprite(moneyText, TEXT_LAYER);
 
-            loosingGameDialog = new LoosingGameDialog(assetsLoader);
+            loosingGameDialog = new LoosingGameDialog(assetsLoader, this);
+
+            clickToStartTextSprite = new ClickToStartTextSprite(CLICK_TO_START_TEXT, screenSize);
+            renderLayer.addTextSprite(clickToStartTextSprite, CLICK_TO_START_LAYER);
+
+            bonusCreator.setOnBonusCachedListener(this);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -221,6 +250,56 @@ public class GameScreen implements Screen, OnTouchListener{
         } else {
             setCharacterPositionRight();
         }
+    }
+
+    private void createStone(final TileEntity leftTileEntity, final TileEntity rightTileEntity, final float tileYPosition) throws Exception{
+        if (leftTileEntity.getType().equals(TileEntity.Type.WHITE)
+                && rightTileEntity.getType().equals(TileEntity.Type.WHITE)) {
+            return;
+        }
+        final StoneSprite stoneSprite = (StoneSprite) pool.get(StoneSprite.class);
+        createdStoneSprite = stoneSprite;
+        stoneSprite.setWidth(100);
+        stoneSprite.setHeight(100);
+        stoneSprite.setLeftAnimation(assetsLoader.getStoneLeftAnimation());
+        stoneSprite.setRightAnimation(assetsLoader.getStoneRightAnimation());
+        final TweenAnimation stoneSpriteAnimation;
+        if (stoneSprite.getTweenAnimation() != null) {
+            stoneSpriteAnimation = stoneSprite.getTweenAnimation();
+        } else {
+            stoneSpriteAnimation = new TweenAnimation();
+            stoneSprite.setTweenAnimation(stoneSpriteAnimation);
+        }
+        if (leftTileEntity.getType().equals(TileEntity.Type.BLACK)) { // as right
+            stoneSprite.changeAnimation(DirectedAnimatedSprite.FlipDirection.RIGHT);
+            stoneSpriteAnimation.restart(0, tileYPosition, 25, screenSize.HEIGHT / 2, TILE_SPEED + 100);
+        } else {
+            stoneSprite.changeAnimation(DirectedAnimatedSprite.FlipDirection.LEFT);
+            stoneSpriteAnimation.restart(screenSize.WIDTH - stoneSprite.getWidth(), tileYPosition,
+                    screenSize.WIDTH - stoneSprite.getWidth() - 25, screenSize.HEIGHT / 2, TILE_SPEED + 100);
+        }
+        stoneSpriteAnimation.start();
+        animator.createAnimation(stoneSpriteAnimation);
+
+        final float destinationX = screenSize.WIDTH / 2 - stoneSprite.getWidth() / 2;
+        final float destinationY = screenSize.HEIGHT;
+        stoneSpriteAnimation.setOnAnimationFinishListener(new TweenAnimation.OnAnimationFinishListener() {
+            @Override
+            public void onAnimationFinish(final float destX, final float destY) {
+                if (destX == destinationX && destY == destinationY) {
+                    pool.release(stoneSprite);
+                    renderLayer.removeSprite(stoneSprite);
+                    createdStoneSprite = null;
+                } else {
+                    stoneSpriteAnimation.restart(stoneSprite.getX(), stoneSprite.getY(),
+                            destinationX, destinationY, 600.0f);
+                    stoneSpriteAnimation.start();
+                }
+            }
+        });
+
+        stoneSprite.setState(AnimatedSprite.AnimationState.PLAY);
+        renderLayer.addAnimatedSprite(stoneSprite, true, SPRITES_LAYER);
     }
 
     private void setCharacterPositionLeft() {
@@ -280,16 +359,16 @@ public class GameScreen implements Screen, OnTouchListener{
                     i++;
                 }
             }
+
             final TileSprite tileSpriteUnderCharacter = getTileSpriteUnderCharacter();
             if (tileSpriteUnderCharacter != null) {
-                Gdx.app.log("TileType", tileSpriteUnderCharacter.getType().name());
                 if (tileSpriteUnderCharacter.hasBonus()) { // TODO услокие бонусов
-                    onBonusCatched(tileSpriteUnderCharacter);
+                    //onBonusCatched(tileSpriteUnderCharacter);
+                    bonusCreator.onBonusCatched(tileSpriteUnderCharacter, moneyText.getX(), moneyText.getY());
                 }
                 if (tileSpriteUnderCharacter.getType().equals(TileEntity.Type.BLACK)) {
                     if (!isFailedGame) {
                         isFailedGame = true;
-                        Gdx.app.log("Loose", "looooooooooooossseeeeee");
                         onGameFail();
                     }
                 }
@@ -318,7 +397,7 @@ public class GameScreen implements Screen, OnTouchListener{
         }
 
         createLoosingGameDialog();
-        Gdx.app.log("CurrentBestScore", "currentBestScore " + bestScoreStore.getBestScore());
+        gameIsStarted = false;
     }
 
     private void createLoosingGameDialog() {
@@ -329,42 +408,6 @@ public class GameScreen implements Screen, OnTouchListener{
 
         loosingGameDialog.initDialog(distance, bestScoreStore.getBestScore());
         loosingGameDialog.addOnScreen(renderLayer, LOOSING_GAME_DIALOG_LAYER);
-    }
-
-    private void onBonusCatched(final TileSprite tileWithBonus) {
-        final Sprite bonus = tileWithBonus.getBonus();
-        try {
-            final GoldSprite goldSprite = (GoldSprite) pool.get(GoldSprite.class);
-            goldSprite.setTextureRegion(assetsLoader.getGoldTextureRegion());
-            goldSprite.setWidth(bonus.getWidth());
-            goldSprite.setHeight(bonus.getHeight());
-            final TweenAnimation goldTweenAnimation;
-            if (goldSprite.getTweenAnimation() != null) {
-                goldTweenAnimation = goldSprite.getTweenAnimation();
-            } else {
-                goldTweenAnimation = new TweenAnimation();
-                goldSprite.setTweenAnimation(goldTweenAnimation);
-            }
-            animator.createAnimation(goldTweenAnimation);
-            goldTweenAnimation.restart(bonus.getX(), bonus.getY(), moneyText.getX(), moneyText.getY(), GOLD_TWEEN_SPEED);
-            goldTweenAnimation.start();
-            goldTweenAnimation.setOnAnimationFinishListener(new TweenAnimation.OnAnimationFinishListener() {
-                @Override
-                public void onAnimationFinish(final float destX, final float destY) {
-                    moneyCount ++;
-                    moneyText.setText(moneyCount + "");
-                    moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
-                    renderLayer.removeSprite(goldSprite);
-                    pool.release(goldSprite);
-                }
-            });
-            renderLayer.addSprite(goldSprite, true, TILE_LAYER);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        pool.release(bonus);
-        renderLayer.removeSprite(bonus);
-        tileWithBonus.setBonus(null);
     }
 
     private void createNewPair() {
@@ -394,55 +437,30 @@ public class GameScreen implements Screen, OnTouchListener{
         tileSprites.remove(0);
 
         try {
+            final float tileYPosition = screenSize.HEIGHT - TILE_HEIGHT - (VERTICAL_TILE_COUNT - 1) * TILE_HEIGHT;
             final TileEntity newLeftTileEntity = tiles.get(tiles.size() - 2);
-            final TileSprite newLeftTileSprite = TileSprite.createTileSprite(0, screenSize.HEIGHT - TILE_HEIGHT - (VERTICAL_TILE_COUNT - 1) * TILE_HEIGHT,
+            final TileSprite newLeftTileSprite = TileSprite.createTileSprite(0, tileYPosition,
                     newLeftTileEntity.getType(), TileEntity.Position.LEFT, pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);
             renderLayer.addSprite(newLeftTileSprite, true, TILE_LAYER);
             tileSprites.add(newLeftTileSprite);
 
             final TileEntity newRightTileEntity = tiles.get(tiles.size() - 1);
             final TileSprite newRightTileSprite = TileSprite.createTileSprite(screenSize.WIDTH - TILE_WIDTH,
-                    screenSize.HEIGHT - TILE_HEIGHT - (VERTICAL_TILE_COUNT - 1) * TILE_HEIGHT, newRightTileEntity.getType(), TileEntity.Position.RIGHT,
+                    tileYPosition, newRightTileEntity.getType(), TileEntity.Position.RIGHT,
                     pool, assetsLoader, TILE_WIDTH, TILE_HEIGHT);
             renderLayer.addSprite(newRightTileSprite, true, TILE_LAYER);
             tileSprites.add(newRightTileSprite);
 
-            // CREATE GOLD BONUS
-            if (goldBonusRandom.getRandom()) {
-                final TileSprite notEmptyTileSprite;
-                final boolean isLeft;
-                if (newLeftTileEntity.getType().equals(TileEntity.Type.WHITE) && newRightTileEntity.getType().equals(TileEntity.Type.WHITE)) {
-                    if (binaryRandom.getRandom()) {
-                        notEmptyTileSprite = newLeftTileSprite;
-                        isLeft = false;
-                    } else {
-                        notEmptyTileSprite = newRightTileSprite;
-                        isLeft = true;
-                    }
-                } else {
-                    if (newRightTileEntity.getType().equals(TileEntity.Type.WHITE)) {
-                        notEmptyTileSprite = newRightTileSprite;
-                        isLeft = true;
-                    } else {
-                        notEmptyTileSprite = newLeftTileSprite;
-                        isLeft = false;
-                    }
-                }
-                final BonusSprite bonusSprite = (BonusSprite) pool.get(BonusSprite.class);
-                bonusSprite.setTextureRegion(assetsLoader.getGoldTextureRegion());
-                bonusSprite.setWidth(GOLD_SIZE);
-                bonusSprite.setHeight(GOLD_SIZE);
-                final float goldYPos = notEmptyTileSprite.getY() + notEmptyTileSprite.getHeight() * 0.5f - bonusSprite.getHeight() * 0.5f;
-                bonusSprite.setY(goldYPos);
-                if (isLeft) {
-                    bonusSprite.setX(notEmptyTileSprite.getX() + notEmptyTileSprite.getWidth());
-                } else {
-                    bonusSprite.setX(notEmptyTileSprite.getX() - bonusSprite.getWidth());
-                }
-                notEmptyTileSprite.setBonus(bonusSprite);
-                renderLayer.addSprite(bonusSprite, true, BONUS_LAYER);
+            // CREATE BONUS
+            if (goldBonusRandom.get()) {
+                bonusCreator.createBonus(BonusType.GOLD, newLeftTileSprite, newRightTileSprite);
             }
-
+            if (brillianceBonusRandom.get()) {
+                bonusCreator.createBonus(BonusType.BRILLIANCE, newLeftTileSprite, newRightTileSprite);
+            }
+            if (stoneRandom.get() && createdStoneSprite == null) { // за один раз только один камень
+                createStone(newLeftTileEntity, newRightTileEntity, tileYPosition);
+            }
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -499,6 +517,42 @@ public class GameScreen implements Screen, OnTouchListener{
         return null;
     }
 
+    private void restartGame() {
+        for (int i = 0, length = tileSprites.size(); i < length; i++) {
+            BonusSprite bonus = tileSprites.get(i).getBonus();
+            if (bonus != null) {
+                renderLayer.removeSprite(bonus);
+                bonus = null;
+                tileSprites.get(i).setBonus(null);
+            }
+            renderLayer.removeSprite(tileSprites.get(i));
+            pool.release(tileSprites.get(i));
+        }
+        tileSprites.clear();
+    }
+
+    private void clearProgress() {
+        distance = 0;
+        moneyCount = 0;
+        distanceText.setText(distance + "m");
+        moneyText.setText(moneyCount + "");
+        moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
+    }
+
+    private void checkCharacterIsDie() {
+        if (!isFailedGame && createdStoneSprite != null) {
+            final float stoneX = createdStoneSprite.getX() + createdStoneSprite.getWidth() / 2;
+            final float stoneY = createdStoneSprite.getY() + createdStoneSprite.getHeight() / 2;
+            if (stoneX >= character.getX() && stoneX <= character.getX() + character.getWidth() &&
+                    stoneY >= character.getY() && stoneY <= character.getY() + character.getHeight()) {
+                isFailedGame = true;
+                onGameFail();
+            }
+            //if (createdStoneSprite.getX())
+            // check intercept stone and character
+        }
+    }
+
     @Override
     public void show() {
 
@@ -510,7 +564,9 @@ public class GameScreen implements Screen, OnTouchListener{
 
         renderLayer.render(delta);
         animator.update(delta);
+
         if (!isFailedGame && gameIsStarted) {
+            checkCharacterIsDie();
             moveTiles(delta);
         }
         rotateCharacter();
@@ -545,20 +601,28 @@ public class GameScreen implements Screen, OnTouchListener{
 
     @Override
     public void onTouchDown(final float xPos, final float yPos) {
-        if (!isFailedGame) {
-            if (gameIsStarted) {
-                if (character.getFlipDirection() == CharacterSprite.FlipDirection.LEFT) {
-                    character.changeAnimation(CharacterSprite.FlipDirection.RIGHT);
-                    characterTween.copyFromAnimation(characterRightTween);
-                    characterTween.start();
-                } else {
-                    character.changeAnimation(CharacterSprite.FlipDirection.LEFT);
-                    characterTween.copyFromAnimation(characterLeftTween);
-                    characterTween.start();
+        final float relativeClickX = xPos * screenSize.SCALE_PARAM;
+        final float relativeClickY = yPos * screenSize.SCALE_PARAM;
+        if (loosingGameDialog.isShown()) {
+            loosingGameDialog.checkLeftButtonClickedAndAction(relativeClickX, relativeClickY);
+            loosingGameDialog.checkRightButtonClickedAndAction(relativeClickX, relativeClickY);
+        } else {
+            if (!isFailedGame) {
+                if (gameIsStarted) {
+                    if (character.getFlipDirection() == CharacterSprite.FlipDirection.LEFT) {
+                        character.changeAnimation(CharacterSprite.FlipDirection.RIGHT);
+                        characterTween.copyFromAnimation(characterRightTween);
+                        characterTween.start();
+                    } else {
+                        character.changeAnimation(CharacterSprite.FlipDirection.LEFT);
+                        characterTween.copyFromAnimation(characterLeftTween);
+                        characterTween.start();
+                    }
                 }
-            }
-            if (!gameIsStarted) {
-                gameIsStarted = true;
+                if (!gameIsStarted) {
+                    gameIsStarted = true;
+                    renderLayer.removeSprite(clickToStartTextSprite);
+                }
             }
         }
     }
@@ -566,5 +630,40 @@ public class GameScreen implements Screen, OnTouchListener{
     @Override
     public void onTouchUp() {
 
+    }
+
+    @Override
+    public void onLeftAction() {
+        renderLayer.addTextSprite(clickToStartTextSprite, CLICK_TO_START_LAYER);
+        loosingGameDialog.removeFromScreen(renderLayer);
+
+        isFailedGame = false;
+        gameIsStarted = false;
+
+        restartGame();
+        clearProgress();
+        createDefaultTiles();
+    }
+
+    @Override
+    public void onRightAction() {
+        isFailedGame = false;
+        loosingGameDialog.removeFromScreen(renderLayer);
+        renderLayer.addTextSprite(clickToStartTextSprite, CLICK_TO_START_LAYER);
+
+        isFailedGame = false;
+        gameIsStarted = false;
+
+        restartGame();
+        createDefaultTiles();
+    }
+
+    @Override
+    public void onBonusCached(BonusSprite bonusSprite) {
+        moneyCount += bonusSprite.getSelfCoast();
+        moneyText.setText(moneyCount + "");
+        moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
+        renderLayer.removeSprite(bonusSprite);
+        pool.release(bonusSprite);
     }
 }
