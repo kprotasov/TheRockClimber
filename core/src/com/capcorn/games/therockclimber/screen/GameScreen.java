@@ -253,8 +253,15 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     }
 
     private void createStone(final TileEntity leftTileEntity, final TileEntity rightTileEntity, final float tileYPosition) throws Exception{
-        if (leftTileEntity.getType().equals(TileEntity.Type.WHITE)
+        // закомментированное решение добавляет падающий камень на черный тайл.
+        // такое решение играется более сложно, хотя и имеет прохождение.
+        // иммеет смысл оставить для увеличения сложности
+        /*if (leftTileEntity.getType().equals(TileEntity.Type.WHITE)
                 && rightTileEntity.getType().equals(TileEntity.Type.WHITE)) {
+            return;
+        }*/
+        if (leftTileEntity.getType().equals(TileEntity.Type.BLACK)
+                || rightTileEntity.getType().equals(TileEntity.Type.BLACK)) {
             return;
         }
         final StoneSprite stoneSprite = (StoneSprite) pool.get(StoneSprite.class);
@@ -270,13 +277,14 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
             stoneSpriteAnimation = new TweenAnimation();
             stoneSprite.setTweenAnimation(stoneSpriteAnimation);
         }
-        if (leftTileEntity.getType().equals(TileEntity.Type.BLACK)) { // as right
+        //if (leftTileEntity.getType().equals(TileEntity.Type.BLACK)) { // as left
+        if (binaryRandom.getRandom()) {
             stoneSprite.changeAnimation(DirectedAnimatedSprite.FlipDirection.RIGHT);
-            stoneSpriteAnimation.restart(0, tileYPosition, 25, screenSize.HEIGHT / 2, TILE_SPEED + 100);
+            stoneSpriteAnimation.restart(0, tileYPosition, 25, screenSize.HEIGHT / 2, TILE_SPEED + 200);
         } else {
             stoneSprite.changeAnimation(DirectedAnimatedSprite.FlipDirection.LEFT);
             stoneSpriteAnimation.restart(screenSize.WIDTH - stoneSprite.getWidth(), tileYPosition,
-                    screenSize.WIDTH - stoneSprite.getWidth() - 25, screenSize.HEIGHT / 2, TILE_SPEED + 100);
+                    screenSize.WIDTH - stoneSprite.getWidth() - 25, screenSize.HEIGHT / 2, TILE_SPEED + 200);
         }
         stoneSpriteAnimation.start();
         animator.createAnimation(stoneSpriteAnimation);

@@ -30,4 +30,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/start_top_offset"/>
 
+    <TextView
+        android:id="@+id/character_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/character_button"
+        android:textColor="@color/start_button_text_color"
+        android:textSize="@dimen/start_text_size"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/character_top_offset"/>
+
 </RelativeLayout>
