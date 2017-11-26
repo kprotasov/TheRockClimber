@@ -8,8 +8,19 @@ package com.capcorn.games.therockclimber.graphics;
 
 public enum AnimatedResourceNames {
 
-    CHARACTER("character.png", 6, 4, 200, 393),
+    BASE_CHARACTER("character.png", 6, 4, 200, 393),
+    FORESTER_CHARACTER("character_forester.png", 6, 4, 200, 393),
+    ZOMBIE_CHARACTER("character_zombie.png", 6, 4, 200, 393),
     STONE("stone_spritesheet.png", 11, 1, 100, 100);
+
+    public static AnimatedResourceNames getResourceByName(final String name) {
+        for (AnimatedResourceNames animatedResourceNames : AnimatedResourceNames.values()) {
+            if (name.equalsIgnoreCase(animatedResourceNames.getName())) {
+                return animatedResourceNames;
+            }
+        }
+        return BASE_CHARACTER;
+    }
 
     private final String name;
     private final int horizontalCount;

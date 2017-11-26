@@ -4,5 +4,8 @@
     <string name="app_name">TheRockClimber</string>
     <string name="start_button">start</string>
     <string name="character_button">character</string>
+    <string name="choose_character">Choose character</string>
+
+    <string name="you_money">You money: %s</string>
 
 </resources>

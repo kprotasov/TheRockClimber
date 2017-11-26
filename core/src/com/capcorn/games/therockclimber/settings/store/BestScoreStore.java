@@ -14,14 +14,14 @@ public class BestScoreStore {
     private static final String BEST_SCORE_PREFERENCES_NAME = "com.capcorn.games.therockclimber.settings.store.BEST_SCORE_PREFERENCES_NAME";
     private static final String BEST_SCORE_KEY = "com.capcorn.games.therockclimber.settings.store.BEST_SCORE_KEY";
 
-    public int getBestScore() {
+    public long getBestScore() {
         final Preferences preferences = Gdx.app.getPreferences(BEST_SCORE_PREFERENCES_NAME);
-        return preferences.getInteger(BEST_SCORE_KEY);
+        return preferences.getLong(BEST_SCORE_KEY);
     }
 
-    public void setBestScore(final int score) {
+    public void setBestScore(final long score) {
         final Preferences preferences = Gdx.app.getPreferences(BEST_SCORE_PREFERENCES_NAME);
-        preferences.putInteger(BEST_SCORE_KEY, score);
+        preferences.putLong(BEST_SCORE_KEY, score);
         preferences.flush();
     }
 

@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.Random;
 
-import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.CHARACTER;
-import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.STONE;
+import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.*;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BRILLIANCE;
@@ -61,15 +60,21 @@ public class AssetsLoader {
 
     private TextureRegion brillianceTextureRegion;
 
+    private AnimatedResourceNames characterResourceName;
+
     private AssetManager manager;
 
     public AssetsLoader() {
         tileRandom = new Random();
     }
 
+    public void setCharacterResource(final AnimatedResourceNames characterResourceName) {
+        this.characterResourceName = characterResourceName;
+    }
+
     public AssetManager start() {
         manager = new AssetManager();
-        manager.load(CHARACTER.getName(), Texture.class);
+        manager.load(characterResourceName.getName(), Texture.class);
         manager.load(STONE.getName(), Texture.class);
         manager.load(BACKGROUND.getName(), Texture.class);
         manager.load(BLACK_TILE_ATLAS.getName(), Texture.class);
@@ -84,7 +89,7 @@ public class AssetsLoader {
     }
 
     public void createTextures() {
-        characterTexture = manager.get(CHARACTER.getName());
+        characterTexture = manager.get(characterResourceName.getName());
         characterTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         stoneTexture = manager.get(STONE.getName());
@@ -136,7 +141,7 @@ public class AssetsLoader {
         } catch (final Exception e) {
             e.printStackTrace();
         }
-        manager.unload(CHARACTER.getName());
+        manager.unload(characterResourceName.getName());
         manager.unload(STONE.getName());
         manager.unload(BACKGROUND.getName());
         manager.unload(BLACK_TILE_ATLAS.getName());
@@ -214,12 +219,12 @@ public class AssetsLoader {
 
     private Animation createCharacterTextureRegionRight() {
         int k = 0;
-        TextureRegion[] characterTextureRegion = new TextureRegion[CHARACTER.getHorizontalCount()
-                * CHARACTER.getVerticalCount()];
-        for (int j = 0; j < CHARACTER.getVerticalCount(); j++){
-            for (int i = 0; i < CHARACTER.getHorizontalCount(); i++) {
-                characterTextureRegion[k] = new TextureRegion(characterTexture, CHARACTER.getWidth() * i,
-                        CHARACTER.getHeight() * j, CHARACTER.getWidth(), CHARACTER.getHeight());
+        TextureRegion[] characterTextureRegion = new TextureRegion[characterResourceName.getHorizontalCount()
+                * characterResourceName.getVerticalCount()];
+        for (int j = 0; j < characterResourceName.getVerticalCount(); j++){
+            for (int i = 0; i < characterResourceName.getHorizontalCount(); i++) {
+                characterTextureRegion[k] = new TextureRegion(characterTexture, characterResourceName.getWidth() * i,
+                        characterResourceName.getHeight() * j, characterResourceName.getWidth(), characterResourceName.getHeight());
                 characterTextureRegion[k].flip(false, true);
                 k++;
             }
@@ -231,12 +236,12 @@ public class AssetsLoader {
 
     private Animation createCharacterTextureRegionLeft() {
         int k = 0;
-        TextureRegion[] characterTextureRegion = new TextureRegion[CHARACTER.getHorizontalCount()
-                * CHARACTER.getVerticalCount()];
-        for (int j = 0; j < CHARACTER.getVerticalCount(); j++){
-            for (int i = 0; i < CHARACTER.getHorizontalCount(); i++) {
-                characterTextureRegion[k] = new TextureRegion(characterTexture, CHARACTER.getWidth() * i,
-                        CHARACTER.getHeight() * j, CHARACTER.getWidth(), CHARACTER.getHeight());
+        TextureRegion[] characterTextureRegion = new TextureRegion[characterResourceName.getHorizontalCount()
+                * characterResourceName.getVerticalCount()];
+        for (int j = 0; j < characterResourceName.getVerticalCount(); j++){
+            for (int i = 0; i < characterResourceName.getHorizontalCount(); i++) {
+                characterTextureRegion[k] = new TextureRegion(characterTexture, characterResourceName.getWidth() * i,
+                        characterResourceName.getHeight() * j, characterResourceName.getWidth(), characterResourceName.getHeight());
                 characterTextureRegion[k].flip(true, true);
                 k++;
             }

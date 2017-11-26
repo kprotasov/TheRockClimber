@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e5e5e5">
+
+    <TextView
+        android:id="@+id/money_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:text="@string/you_money"
+        android:textColor="@color/color_white"
+        android:background="#4D697F"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/padding_16dp"
+        android:height="48dp"/>
+
+    <!--<ListView
+        android:id="@+id/characters_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@null"
+        android:paddingTop="150dp"
+        android:paddingBottom="150dp"
+        android:clipToPadding="false"/>-->
+    <ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/select_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_default_height"
+        android:background="#4D697F"/>
+
+</LinearLayout>

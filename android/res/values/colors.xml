@@ -2,6 +2,7 @@
 <resources>
 
     <color name="color_black">#FF000000</color>
+    <color name="color_white">#FFFFFFFF</color>
 
     <color name="main_title_text_color">@color/color_black</color>
     <color name="start_button_text_color">@color/color_black</color>

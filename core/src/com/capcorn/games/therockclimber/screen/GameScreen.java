@@ -28,6 +28,7 @@ import com.capcorn.games.therockclimber.input.InputHandler;
 import com.capcorn.games.therockclimber.input.OnTouchListener;
 import com.capcorn.games.therockclimber.settings.Settings;
 import com.capcorn.games.therockclimber.settings.store.BestScoreStore;
+import com.capcorn.games.therockclimber.settings.store.MoneyStore;
 import com.capcorn.games.therockclimber.sprite.BonusSprite;
 import com.capcorn.games.therockclimber.sprite.BonusType;
 import com.capcorn.games.therockclimber.sprite.BrillianceSprite;
@@ -80,14 +81,16 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private final Animator animator;
     private final BitmapFont gameFont;
     private CameraShakeEffect cameraShakeEffect;
-    private BestScoreStore bestScoreStore;
     private ClickToStartTextSprite clickToStartTextSprite;
     private BonusCreator bonusCreator;
 
+    private BestScoreStore bestScoreStore;
+    private MoneyStore moneyStore;
+
     private TextSprite distanceText;
-    private int distance = 0;
+    private long distance = 0;
     private TextSprite moneyText;
-    private int moneyCount = 0;
+    private long moneyCount = 0;
 
     private TweenAnimation characterLeftTween;
     private TweenAnimation characterRightTween;
@@ -141,6 +144,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         renderLayer.setColor(topColor, topColor, bottomColor, bottomColor);
 
         bestScoreStore = new BestScoreStore();
+        moneyStore = new MoneyStore();
 
         pool = new ObjectPool();
 
@@ -399,7 +403,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         cameraShakeEffect.shake(5.0f, 0.15f);
 
 
-        final int bestStoredScore = bestScoreStore.getBestScore();
+        final long bestStoredScore = bestScoreStore.getBestScore();
         if (distance > bestStoredScore) {
             bestScoreStore.setBestScore(distance);
         }
@@ -414,7 +418,10 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         loosingGameDialog.setX(screenSize.WIDTH / 2 - loosingGameDialog.getWidth() / 2);
         loosingGameDialog.setY(screenSize.HEIGHT / 2 - loosingGameDialog.getHeight() / 2);
 
-        loosingGameDialog.initDialog(distance, bestScoreStore.getBestScore());
+        final long totalMoney = moneyStore.getTotalMoney() + moneyCount;
+        moneyStore.setTotalMoney(totalMoney);
+
+        loosingGameDialog.initDialog(distance, bestScoreStore.getBestScore(), totalMoney);
         loosingGameDialog.addOnScreen(renderLayer, LOOSING_GAME_DIALOG_LAYER);
     }
 

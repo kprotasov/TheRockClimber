@@ -20,6 +20,7 @@ public class LoosingGameDialog extends Sprite {
     private static final String INITIAL_TEXT = "";
     private static final String CURRENT_SCORE_TEXT = "You Score: %s";
     private static final String BEST_SCORE_TEXT = "Best Score: %s";
+    private static final String MONEY_TEXT = "You money: %s";
     private static final String LEFT_BUTTON_TEXT = "Restart";
     private static final String RIGHT_BUTTON_TEXT = "Continue";
 
@@ -29,6 +30,7 @@ public class LoosingGameDialog extends Sprite {
     private final BitmapFont dialogFont;
     private final TextSprite currentScoreTextSprite;
     private final TextSprite bestScoreTextSprite;
+    private final TextSprite moneyTextSprite;
     private final TextSprite leftButtonTextSprite;
     private final TextSprite rightButtonTextSprite;
 
@@ -43,13 +45,15 @@ public class LoosingGameDialog extends Sprite {
         dialogFont = DistanceFontCreator.createFont(TITLE_FONT_SIZE, false);
         currentScoreTextSprite = new TextSprite(INITIAL_TEXT, dialogFont, 0, 0);
         bestScoreTextSprite = new TextSprite(INITIAL_TEXT, dialogFont, 0, 0);
+        moneyTextSprite = new TextSprite(INITIAL_TEXT, dialogFont, 0, 0);
         leftButtonTextSprite = new TextSprite(LEFT_BUTTON_TEXT, dialogFont, 0, 0);
         rightButtonTextSprite = new TextSprite(RIGHT_BUTTON_TEXT, dialogFont, 0, 0);
     }
 
-    public void initDialog(final int currentScore, final int bestScore) {
+    public void initDialog(final long currentScore, final long bestScore, final long totalMoneyCount) {
         final String formattedCurrentScoreText = String.format(CURRENT_SCORE_TEXT, currentScore);
         final String formattedBestScoreText = String.format(BEST_SCORE_TEXT, bestScore);
+        final String formattedTotalMoneyText = String.format(MONEY_TEXT, totalMoneyCount);
 
         final float dialogCenter = getX() + getWidth() / 2;
 
@@ -60,9 +64,15 @@ public class LoosingGameDialog extends Sprite {
         currentScoreTextSprite.setY(getY() + 30);
 
         final float bestScoreWidth = FontUtils.getFontWidth(dialogFont, formattedBestScoreText);
+        final float bestScoreHeight = FontUtils.getFontHeight(dialogFont, formattedBestScoreText);
         bestScoreTextSprite.setText(formattedBestScoreText);
         bestScoreTextSprite.setX(dialogCenter - bestScoreWidth / 2);
         bestScoreTextSprite.setY(currentScoreTextSprite.getY() + currentScoreHeight + 30);
+
+        final float totalMoneyWidth = FontUtils.getFontWidth(dialogFont, formattedTotalMoneyText);
+        moneyTextSprite.setText(formattedTotalMoneyText);
+        moneyTextSprite.setX(dialogCenter - totalMoneyWidth / 2);
+        moneyTextSprite.setY(bestScoreTextSprite.getY() + bestScoreHeight + 30);
 
         final float leftTextWidth = FontUtils.getFontWidth(dialogFont, LEFT_BUTTON_TEXT);
         final float leftTextHeight = FontUtils.getFontHeight(dialogFont, LEFT_BUTTON_TEXT);
@@ -83,6 +93,7 @@ public class LoosingGameDialog extends Sprite {
         final int contentLayer = layer + 1;
         renderLayer.addTextSprite(currentScoreTextSprite, contentLayer);
         renderLayer.addTextSprite(bestScoreTextSprite, contentLayer);
+        renderLayer.addTextSprite(moneyTextSprite, contentLayer);
 
         final int buttonTextLayer = contentLayer + 1;
         renderLayer.addTextSprite(leftButtonTextSprite, buttonTextLayer);
@@ -95,6 +106,7 @@ public class LoosingGameDialog extends Sprite {
         renderLayer.removeSprite(this);
         renderLayer.removeSprite(currentScoreTextSprite);
         renderLayer.removeSprite(bestScoreTextSprite);
+        renderLayer.removeSprite(moneyTextSprite);
         renderLayer.removeSprite(leftButtonTextSprite);
         renderLayer.removeSprite(rightButtonTextSprite);
     }
