@@ -91,6 +91,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private long distance = 0;
     private TextSprite moneyText;
     private long moneyCount = 0;
+    private long currentGameMoneyCount = 0;
 
     private TweenAnimation characterLeftTween;
     private TweenAnimation characterRightTween;
@@ -418,10 +419,11 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         loosingGameDialog.setX(screenSize.WIDTH / 2 - loosingGameDialog.getWidth() / 2);
         loosingGameDialog.setY(screenSize.HEIGHT / 2 - loosingGameDialog.getHeight() / 2);
 
-        final long totalMoney = moneyStore.getTotalMoney() + moneyCount;
+        final long totalMoney = moneyStore.getTotalMoney() + currentGameMoneyCount;
         moneyStore.setTotalMoney(totalMoney);
+        Gdx.app.log("GameScreenTest", "money " + totalMoney);
 
-        loosingGameDialog.initDialog(distance, bestScoreStore.getBestScore(), totalMoney);
+        loosingGameDialog.initDialog(distance, bestScoreStore.getBestScore(), moneyCount);
         loosingGameDialog.addOnScreen(renderLayer, LOOSING_GAME_DIALOG_LAYER);
     }
 
@@ -657,6 +659,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
         restartGame();
         clearProgress();
+        currentGameMoneyCount = 0;
         createDefaultTiles();
     }
 
@@ -670,12 +673,14 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         gameIsStarted = false;
 
         restartGame();
+        currentGameMoneyCount = 0;
         createDefaultTiles();
     }
 
     @Override
     public void onBonusCached(BonusSprite bonusSprite) {
         moneyCount += bonusSprite.getSelfCoast();
+        currentGameMoneyCount += bonusSprite.getSelfCoast();
         moneyText.setText(moneyCount + "");
         moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
         renderLayer.removeSprite(bonusSprite);

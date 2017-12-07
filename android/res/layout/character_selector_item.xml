@@ -8,64 +8,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:src="@drawable/character_base" />
-
-    <!--<FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp">
-
-        <TextView
-            android:id="@+id/character_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="forester"
-            android:textColor="@color/color_white"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_gravity="center"
-            android:background="#FFFFFFFF"
-            android:padding="25dp">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#6B6B6B"
-                android:src="@drawable/character_base" />
-
-        </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_gravity="bottom|right"
-            android:background="@drawable/circle_payment_layout">
-
-            <TextView
-                android:id="@+id/price_test_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10000"
-                android:layout_gravity="center"
-                android:textColor="@color/color_black" />
-
-            <ImageButton
-                android:id="@+id/item_check"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:background="@null"
-                android:src="@drawable/check"
-                android:scaleType="fitStart"/>
-
-        </FrameLayout>
-
-    </FrameLayout>-->
+        android:layout_height="match_parent"
+        android:src="@drawable/character_base"
+        android:layout_margin="50dp"/>
 
 </LinearLayout>
