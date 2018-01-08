@@ -18,16 +18,8 @@
         android:paddingLeft="@dimen/padding_16dp"
         android:height="48dp"/>
 
-    <!--<ListView
-        android:id="@+id/characters_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@null"
-        android:paddingTop="150dp"
-        android:paddingBottom="150dp"
-        android:clipToPadding="false"/>-->
-    <ViewPager
+
+    <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"

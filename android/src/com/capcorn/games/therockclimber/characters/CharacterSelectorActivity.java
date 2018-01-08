@@ -41,7 +41,6 @@ public class CharacterSelectorActivity extends Activity {
         appMoneyStore = new AppMoneyStore(this);
 
         moneyTextView = (TextView) findViewById(R.id.money_text_view);
-        //listView = (ListView) findViewById(R.id.characters_list_view);
         selectButton = (Button) findViewById(R.id.select_button);
         store = new AppSelectedCharacterStore(this);
 
@@ -59,11 +58,11 @@ public class CharacterSelectorActivity extends Activity {
         }
 
         adapter = new CharacterSelectorAdapter(this, R.layout.character_selector_item, characters);
+        final CharacterPagerAdapter testAdapter = new CharacterPagerAdapter(this, R.layout.character_selector_item, characters);
         final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-        //viewPager.setAdapter(adapter);
-        /*listView.setAdapter(adapter);
+        viewPager.setAdapter(testAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Characters selectedCharacter = (Characters) parent.getItemAtPosition(position);
@@ -86,18 +85,6 @@ public class CharacterSelectorActivity extends Activity {
                 startActivity(new Intent(CharacterSelectorActivity.this, RewardedVideoActivity.class));
             }
         });
-
-        /*listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            }
-        });*/
     }
 
 }
