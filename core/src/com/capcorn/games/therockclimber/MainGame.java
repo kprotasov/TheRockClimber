@@ -1,7 +1,6 @@
 package com.capcorn.games.therockclimber;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.capcorn.games.therockclimber.graphics.AnimatedResourceNames;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
@@ -15,6 +14,11 @@ public class MainGame extends Game {
 	private AssetManager assetsManager;
 	private boolean isAssetsLoaded = false;
 	private SelectedGameCharacterStore selectedGameCharacterStore;
+	private final OnShowRewardedVideoListener onShowRewardedVideoListener;
+
+	public MainGame(final OnShowRewardedVideoListener listener) {
+		this.onShowRewardedVideoListener = listener;
+	}
 
 	@Override
 	public void create() {
@@ -46,9 +50,21 @@ public class MainGame extends Game {
 		assetsLoader.dispose();
 	}
 
+	public void onRewardedVideoLoaded() {
+		if (gameScreen != null) {
+			gameScreen.onRewardedVideoLoaded();
+		}
+	}
+
+	public void onRewardedVideoUnloaded() {
+		if (gameScreen != null) {
+			gameScreen.onRewardedVideoUnload();
+		}
+	}
+
 	private void initGameScreen() {
 		assetsLoader.createTextures();
-		gameScreen = new GameScreen(assetsLoader);
+		gameScreen = new GameScreen(assetsLoader, onShowRewardedVideoListener);
 		setScreen(gameScreen);
 	}
 

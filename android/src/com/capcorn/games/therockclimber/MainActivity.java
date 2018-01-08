@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.capcorn.games.therockclimber.characters.CharacterSelectorActivity;
+import com.capcorn.games.therockclimber.rewardedvideo.RewardedVideoActivity;
 
 /**
  * Created by kprotasov on 03.06.2017.
@@ -58,7 +59,8 @@ public class MainActivity extends Activity{
         charactersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                final Intent characterIntent = new Intent(MainActivity.this, CharacterSelectorActivity.class);
+                //final Intent characterIntent = new Intent(MainActivity.this, CharacterSelectorActivity.class);
+                final Intent characterIntent = new Intent(MainActivity.this, RewardedVideoActivity.class);
                 startActivity(characterIntent);
             }
         });

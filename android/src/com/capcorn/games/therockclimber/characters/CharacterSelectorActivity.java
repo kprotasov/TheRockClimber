@@ -1,6 +1,7 @@
 package com.capcorn.games.therockclimber.characters;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.capcorn.games.therockclimber.R;
+import com.capcorn.games.therockclimber.rewardedvideo.RewardedVideoActivity;
 
 /**
  * User: kprotasov
@@ -81,7 +83,7 @@ public class CharacterSelectorActivity extends Activity {
         selectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-
+                startActivity(new Intent(CharacterSelectorActivity.this, RewardedVideoActivity.class));
             }
         });
 

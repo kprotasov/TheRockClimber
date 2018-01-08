@@ -18,7 +18,8 @@ public enum StaticResourceNames {
     LOOSING_GAME_DIALOG_BACKGROUND("loosing_game_background.png", 900, 550),
     DIALOG_BUTTON("dialog_button.png", 200, 50),
     GOLD("gold.png", 85, 85),
-    BRILLIANCE("brilliance.png", 85, 85);
+    BRILLIANCE("brilliance.png", 85, 85),
+    RED_BUTTON("red_button.png", 50, 50);
 
     private final String name;
     private final int width;

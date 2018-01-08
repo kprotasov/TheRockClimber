@@ -17,6 +17,8 @@ import com.capcorn.game.engine.utils.AccelerationRandom;
 import com.capcorn.game.engine.utils.BinaryRandom;
 import com.capcorn.game.engine.utils.PositionUtils;
 import com.capcorn.game.engine.utils.ProbabilityRandom;
+import com.capcorn.games.therockclimber.MainGame;
+import com.capcorn.games.therockclimber.OnShowRewardedVideoListener;
 import com.capcorn.games.therockclimber.creator.BonusCreator;
 import com.capcorn.games.therockclimber.creator.TileCreator;
 import com.capcorn.games.therockclimber.effects.CameraShakeEffect;
@@ -83,6 +85,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private CameraShakeEffect cameraShakeEffect;
     private ClickToStartTextSprite clickToStartTextSprite;
     private BonusCreator bonusCreator;
+    private Sprite redButton;
 
     private BestScoreStore bestScoreStore;
     private MoneyStore moneyStore;
@@ -119,8 +122,9 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private static final int TEXT_LAYER = 5;
     private static final int LOOSING_GAME_DIALOG_LAYER = 6;
     private static final int CLICK_TO_START_LAYER = 7;
+    private static final int RED_BUTTON_LAYER = 8;
 
-    public GameScreen(final AssetsLoader assetsLoader) {
+    public GameScreen(final AssetsLoader assetsLoader, final OnShowRewardedVideoListener onShowRewardedVideoListener) {
         this.assetsLoader = assetsLoader;
         Gdx.input.setInputProcessor(new InputHandler(this));
 
@@ -153,6 +157,9 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         tileSprites = new ArrayList<TileSprite>(HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
 
         bonusCreator = new BonusCreator(pool, renderLayer, assetsLoader, animator, BONUS_LAYER);
+
+        redButton = new Sprite(assetsLoader.getRedButtonTextureRegion(), screenSize.WIDTH - 50, 0, 50, 50);
+        renderLayer.addSprite(redButton, true, RED_BUTTON_LAYER);
 
         initGameObjects();
         createDefaultTiles();
@@ -618,6 +625,10 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     public void onTouchDown(final float xPos, final float yPos) {
         final float relativeClickX = xPos * screenSize.SCALE_PARAM;
         final float relativeClickY = yPos * screenSize.SCALE_PARAM;
+        if (relativeClickX > redButton.getX() && relativeClickX < redButton.getX() + redButton.getWidth() &&
+                relativeClickY > redButton.getY() && relativeClickY < redButton.getY() + redButton.getHeight()) {
+            // show rewarded video
+        }
         if (loosingGameDialog.isShown()) {
             loosingGameDialog.checkLeftButtonClickedAndAction(relativeClickX, relativeClickY);
             loosingGameDialog.checkRightButtonClickedAndAction(relativeClickX, relativeClickY);
@@ -681,4 +692,13 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         renderLayer.removeSprite(bonusSprite);
         pool.release(bonusSprite);
     }
+
+    public void onRewardedVideoLoaded() {
+
+    }
+
+    public void onRewardedVideoUnload() {
+
+    }
+
 }

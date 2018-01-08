@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.Random;
 
-import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.*;
+import javax.xml.soap.Text;
+
+import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.STONE;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BRILLIANCE;
@@ -15,6 +17,7 @@ import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.DIAL
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.GOLD;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.LOOSING_GAME_DIALOG_BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RAM;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RED_BUTTON;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE_ATLAS;
 
@@ -43,6 +46,7 @@ public class AssetsLoader {
     private TextureRegion backgroundTextureRegion;
     private TextureRegion loosingGameBackground;
     private TextureRegion dialogButton;
+    private TextureRegion redButtonTextureRegion;
 
     private Texture ramTexture;
     private TextureRegion ramTextureRegion;
@@ -85,6 +89,7 @@ public class AssetsLoader {
         manager.load(RAM.getName(), Texture.class);
         manager.load(GOLD.getName(), Texture.class);
         manager.load(BRILLIANCE.getName(), Texture.class);
+        manager.load(RED_BUTTON.getName(), Text.class);
         return manager;
     }
 
@@ -110,6 +115,9 @@ public class AssetsLoader {
         Texture dialogButtonTexture = manager.get(DIALOG_BUTTON.getName());
         dialogButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        Texture redButtonTexture = manager.get(RED_BUTTON.getName());
+        redButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
         characterRightAnimation = createCharacterTextureRegionRight();
         characterLeftAnimation = createCharacterTextureRegionLeft();
 
@@ -133,6 +141,7 @@ public class AssetsLoader {
         createLoosingGameBackground(loosingGameBackgroundTexture);
         createDialogButton(dialogButtonTexture);
         createBrillianceTextureRegion(brillianceTexture);
+        createRedButtonTextureRegion(redButtonTexture);
     }
 
     public void dispose() {
@@ -152,6 +161,7 @@ public class AssetsLoader {
         manager.unload(DIALOG_BUTTON.getName());
         manager.unload(GOLD.getName());
         manager.unload(BRILLIANCE.getName());
+        manager.unload(RED_BUTTON.getName());
         manager.dispose();
     }
 
@@ -186,13 +196,11 @@ public class AssetsLoader {
     }
 
     public TextureRegion getWhiteTileLeftTextureRegion() {
-        //return whiteTileLeftTextureRegion;
         final int tilePosition = tileRandom.nextInt(whiteTileLeftTextureRegions.length);
         return whiteTileLeftTextureRegions[tilePosition];
     }
 
     public TextureRegion getWhiteTileRightTextureRegion() {
-        //return whiteTileRightTextureRegion;
         final int tilePosition = tileRandom.nextInt(whiteTileRightTextureRegions.length);
         return whiteTileRightTextureRegions[tilePosition];
     }
@@ -215,6 +223,10 @@ public class AssetsLoader {
 
     public TextureRegion getBrillianceTextureRegion() {
         return brillianceTextureRegion;
+    }
+
+    public TextureRegion getRedButtonTextureRegion() {
+        return redButtonTextureRegion;
     }
 
     private Animation createCharacterTextureRegionRight() {
@@ -323,6 +335,11 @@ public class AssetsLoader {
     private void createGoldTextureRegion() {
         goldTextureRegion = new TextureRegion(goldTexture, 0, 0, GOLD.getWidth(), GOLD.getHeight());
         goldTextureRegion.flip(false, true);
+    }
+
+    private void createRedButtonTextureRegion(final Texture redButtonTexture) {
+        redButtonTextureRegion = new TextureRegion(redButtonTexture, 0, 0, RED_BUTTON.getWidth(), RED_BUTTON.getHeight());
+        redButtonTextureRegion.flip(false, true);
     }
 
     private void createBrillianceTextureRegion(final Texture brillianceTexture) {
