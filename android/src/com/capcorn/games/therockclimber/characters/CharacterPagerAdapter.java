@@ -1,11 +1,14 @@
 package com.capcorn.games.therockclimber.characters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.capcorn.games.therockclimber.R;
 
@@ -30,27 +33,47 @@ public class CharacterPagerAdapter extends PagerAdapter {
         return characters.length;
     }
 
+    public int getItemPosition(@NonNull final Object object) {
+        return POSITION_NONE;
+    }
+
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull final ViewGroup container, int position) {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final ViewGroup viewGroup = (ViewGroup) inflater.inflate(layoutId, container, false);
 
-        final ImageView imageView = (ImageView) viewGroup.findViewById(R.id.imageView);
+        final ImageView imageView = viewGroup.findViewById(R.id.imageView);
+        final TextView priceText = viewGroup.findViewById(R.id.priceText);
+        //final LinearLayout characterContainer = viewGroup.findViewById(R.id.characterContainer);
+
         final Characters character = characters[position];
-        imageView.setImageResource(character.getImageResourceId());
+
+        if (character.isBayed()) {
+            imageView.setImageResource(character.getImageResourceId());
+            priceText.setVisibility(View.INVISIBLE);
+        } else {
+            imageView.setImageResource(character.getNotBuyedResourceId());
+            priceText.setVisibility(View.VISIBLE);
+        }
+        priceText.setText(String.valueOf(character.getPrice()));
 
         container.addView(viewGroup);
         return viewGroup;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull final ViewGroup container, int position, @NonNull final Object object) {
         container.removeView((View) object);
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(final View view, final Object object) {
         return view == object;
+    }
+
+    private boolean isItemEven(final int position) {
+        return position % 2 == 0;
     }
 
 }

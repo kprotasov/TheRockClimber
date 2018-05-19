@@ -1,4 +1,4 @@
-package com.capcorn.games.therockclimber.sprite;
+package com.capcorn.games.therockclimber.sprite.bonus;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -28,6 +28,7 @@ public class GoldSprite extends BonusSprite {
         setType(GOLD_BONUS_TYPE);
     }
 
+    @Override
     public int getSelfCoast() {
         return SELF_COAST;
     }

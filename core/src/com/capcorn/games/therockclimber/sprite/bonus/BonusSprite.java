@@ -1,4 +1,4 @@
-package com.capcorn.games.therockclimber.sprite;
+package com.capcorn.games.therockclimber.sprite.bonus;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.capcorn.game.engine.sprite.Sprite;

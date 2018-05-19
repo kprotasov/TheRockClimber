@@ -19,7 +19,7 @@ import com.google.android.gms.ads.reward.RewardedVideoAdListener;
  * Date: 02.12.2017
  * Time: 23:16
  */
-
+@Deprecated
 public class RewardedVideoActivity extends Activity implements RewardedVideoAdListener {
 
     private RewardedVideoAd rewardedVideoAd;

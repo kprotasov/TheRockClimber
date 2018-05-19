@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e5e5e5">
+    android:id="@+id/root_view"
+    android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/money_text_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
         android:text="@string/you_money"
-        android:textColor="@color/color_white"
-        android:background="#4D697F"
+        android:textColor="@color/color_black"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/padding_16dp"
+        android:paddingRight="@dimen/padding_16dp"
+        android:drawablePadding="24dp"
+        android:drawableRight="@drawable/gold_2"
         android:height="48dp"/>
 
 
@@ -29,6 +33,9 @@
         android:id="@+id/select_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_default_height"
-        android:background="#4D697F"/>
+        android:textSize="22sp"
+        android:textAllCaps="true"
+        tools:text="select"
+        android:background="@android:color/transparent"/>
 
 </LinearLayout>

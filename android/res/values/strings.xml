@@ -6,6 +6,11 @@
     <string name="character_button">character</string>
     <string name="choose_character">Choose character</string>
 
-    <string name="you_money">You money: %s</string>
+    <string name="character_selector_button_selected">selected</string>
+    <string name="character_selector_button_select">select</string>
+    <string name="character_selector_button_buy">buy</string>
+    <string name="character_selector_button_add_money">add money</string>
+
+    <string name="you_money">%s</string>
 
 </resources>

@@ -14,7 +14,6 @@ import java.util.Random;
 public class ProbabilityRandom {
 
     private static final int MAX_PROBABILITY = 100;
-    //private final HashMap<Integer, Integer> probabilities;
     private final List<Integer> probabilitiesList;
     private final List<Integer> randomList;
     private final Random random;

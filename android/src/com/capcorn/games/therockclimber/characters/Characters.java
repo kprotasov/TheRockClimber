@@ -2,6 +2,7 @@ package com.capcorn.games.therockclimber.characters;
 
 import com.capcorn.games.therockclimber.R;
 import com.capcorn.games.therockclimber.graphics.AnimatedResourceNames;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * User: kprotasov
@@ -11,22 +12,27 @@ import com.capcorn.games.therockclimber.graphics.AnimatedResourceNames;
 
 public enum Characters {
 
-    BASE(AnimatedResourceNames.BASE_CHARACTER.getName(), 0, R.drawable.character_base, true, "default", true), // as default
-    FORESTER(AnimatedResourceNames.FORESTER_CHARACTER.getName(), 1000, R.drawable.character_forester, false, "forester", false),
-    ZOMBIE(AnimatedResourceNames.ZOMBIE_CHARACTER.getName(), 2000, R.drawable.character_zombie, false, "zombie", false);
+    BASE(AnimatedResourceNames.BASE_CHARACTER.getName(), 0, R.drawable.character_base,
+            R.drawable.character_base, true, "default", true), // as default
+    FORESTER(AnimatedResourceNames.FORESTER_CHARACTER.getName(), /*1000*/100, R.drawable.character_forester,
+            R.drawable.character_forester_gray, false, "forester", false),
+    ZOMBIE(AnimatedResourceNames.ZOMBIE_CHARACTER.getName(), 2000, R.drawable.character_zombie,
+            R.drawable.character_zombie_gray, false, "zombie", false);
 
-    private final String name;
-    private final int price;
-    private final int imageResourceId;
+    private String name;
+    private long price;
+    private int imageResourceId;
+    private int notBuyedResourceId;
     private boolean selected;
     private String characterName; // depends on @AnimatedResourceNames
     private boolean isBayed;
 
-    Characters(final String name, final int price, final int imageResourceId,
+    Characters(final String name, final long price, final int imageResourceId, final int notBuyedResourceId,
                final boolean selected, final String characterName, final boolean isBayed) {
         this.name = name;
         this.price = price;
         this.imageResourceId = imageResourceId;
+        this.notBuyedResourceId = notBuyedResourceId;
         this.selected = selected;
         this.characterName = characterName;
         this.isBayed = isBayed;
@@ -36,12 +42,16 @@ public enum Characters {
         return name;
     }
 
-    public int getPrice() {
+    public long getPrice() {
         return price;
     }
 
     public int getImageResourceId() {
         return imageResourceId;
+    }
+
+    public int getNotBuyedResourceId() {
+        return notBuyedResourceId;
     }
 
     public boolean isSelected() {
@@ -62,5 +72,63 @@ public enum Characters {
 
     public void setBayed(boolean bayed) {
         isBayed = bayed;
+    }
+
+    public Characters[] getValues() {
+        return values();
+    }
+
+    public CharacterJson copy() {
+        return new CharacterJson(this.name, this.price, this.imageResourceId, this.notBuyedResourceId,
+                this.selected, this.characterName, this.isBayed);
+    }
+
+    public Characters paste(final CharacterJson characterJson) {
+        Characters character;
+        if (characterJson.name.equals(AnimatedResourceNames.FORESTER_CHARACTER.getName())) {
+            character = Characters.FORESTER;
+        } else if (characterJson.name.equals(AnimatedResourceNames.ZOMBIE_CHARACTER.getName())) {
+            character = Characters.ZOMBIE;
+        } else {
+            character = Characters.BASE;
+        }
+        character.name = characterJson.name;
+        character.price = characterJson.price;
+        character.imageResourceId = characterJson.imageResourceId;
+        character.notBuyedResourceId = characterJson.notBuyedResourceId;
+        character.selected = characterJson.selected;
+        character.characterName = characterJson.characterName;
+        character.isBayed = characterJson.isBayed;
+        return character;
+    }
+
+    public class CharacterJson {
+
+        private String name;
+        private long price;
+        private int imageResourceId;
+        private int notBuyedResourceId;
+        private boolean selected;
+        private String characterName; // depends on @AnimatedResourceNames
+        private boolean isBayed;
+
+        public CharacterJson(final String name, final long price, final int imageResourceId, final int notBuyedResourceId,
+                   final boolean selected, final String characterName, final boolean isBayed) {
+            this.name = name;
+            this.price = price;
+            this.imageResourceId = imageResourceId;
+            this.notBuyedResourceId = notBuyedResourceId;
+            this.selected = selected;
+            this.characterName = characterName;
+            this.isBayed = isBayed;
+        }
+
+
+
+        /*public Character paste(final CharacterJson characterJson) {
+            return new Character(characterJson.name, characterJson.price, characterJson.imageResourceId,
+                    characterJson.notBuyedResourceId, characterJson.selected, characterJson.characterName, characterJson.isBayed)
+        }*/
+
     }
 }

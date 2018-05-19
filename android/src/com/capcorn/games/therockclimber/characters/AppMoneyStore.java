@@ -33,7 +33,7 @@ public class AppMoneyStore {
     }
 
     public void save(final long totalMoney) {
-        getSharedPreferences().edit().putLong(MONEY_KEY, totalMoney).commit();
+        getSharedPreferences().edit().putLong(MONEY_KEY, totalMoney).apply();
     }
 
 }

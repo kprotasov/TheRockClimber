@@ -5,6 +5,7 @@ import com.capcorn.game.engine.pool.ObjectPool;
 import com.capcorn.game.engine.sprite.Sprite;
 import com.capcorn.games.therockclimber.entity.TileEntity;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
+import com.capcorn.games.therockclimber.sprite.bonus.BonusSprite;
 
 /**
  * User: kprotasov

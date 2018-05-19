@@ -33,7 +33,7 @@ public class AppSelectedCharacterStore {
     }
 
     public void save(final String selectedCharacter) {
-        getSharedPreferences().edit().putString(RECORD_SAVED_CHARACTER, selectedCharacter).commit();
+        getSharedPreferences().edit().putString(RECORD_SAVED_CHARACTER, selectedCharacter).apply();
     }
 
 }

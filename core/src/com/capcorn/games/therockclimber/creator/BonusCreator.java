@@ -4,15 +4,14 @@ import com.capcorn.game.engine.animation.Animator;
 import com.capcorn.game.engine.animation.TweenAnimation;
 import com.capcorn.game.engine.core.RenderLayer;
 import com.capcorn.game.engine.pool.ObjectPool;
-import com.capcorn.game.engine.sprite.Sprite;
 import com.capcorn.game.engine.utils.BinaryRandom;
 import com.capcorn.games.therockclimber.entity.TileEntity;
-import com.capcorn.games.therockclimber.font.FontUtils;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
-import com.capcorn.games.therockclimber.sprite.BonusSprite;
-import com.capcorn.games.therockclimber.sprite.BonusType;
-import com.capcorn.games.therockclimber.sprite.BrillianceSprite;
-import com.capcorn.games.therockclimber.sprite.GoldSprite;
+import com.capcorn.games.therockclimber.sprite.bonus.BonusSprite;
+import com.capcorn.games.therockclimber.sprite.bonus.BonusType;
+import com.capcorn.games.therockclimber.sprite.bonus.BrillianceSprite;
+import com.capcorn.games.therockclimber.sprite.bonus.GoldSprite;
+import com.capcorn.games.therockclimber.sprite.bonus.SnowflakeSprite;
 import com.capcorn.games.therockclimber.sprite.TileSprite;
 
 /**
@@ -25,8 +24,10 @@ public class BonusCreator {
 
     private static final float GOLD_SIZE = 55;
     private static final float BRILLIANCE_SIZE = 55;
+    private static final float SNOWFLAKE_SIZE = 55;
     private static final float GOLD_TWEEN_SPEED = 1500.0f;
     private static final float BRILLIANCE_TWEEN_SPEED = 1500.0f;
+    private static final float SNOWFLAKE_TWEEN_SPEED = 500.0f;
 
     private final ObjectPool pool;
     private final RenderLayer renderLayer;
@@ -35,7 +36,7 @@ public class BonusCreator {
     private final int bonusLayer;
     private final BinaryRandom binaryRandom;
 
-    private OnBonusCahcedListener onBonusCahcedListener;
+    private OnBonusCahcedListener onBonusCathcedListener;
 
     public BonusCreator(final ObjectPool pool, final RenderLayer renderLayer, final AssetsLoader assetsLoader, final Animator animator, final int bonusLayer) {
         this.pool = pool;
@@ -47,7 +48,7 @@ public class BonusCreator {
     }
 
     public void setOnBonusCachedListener(final OnBonusCahcedListener listener) {
-        this.onBonusCahcedListener = listener;
+        this.onBonusCathcedListener = listener;
     }
 
     public final void createBonus(final BonusType bonusType, final TileSprite leftTileSprite, final TileSprite rightTileSprite) throws IllegalAccessException, InstantiationException{
@@ -61,6 +62,10 @@ public class BonusCreator {
                 break;
             case BRILLIANCE:
                 setupBrillianceBonus(bonusSprite);
+                break;
+            case SNOWFLAKE:
+                setupSnowflakeBonus(bonusSprite);
+                break;
         }
 
         final float goldYPos = notEmptyTileSprite.getY() + notEmptyTileSprite.getHeight() * 0.5f - bonusSprite.getHeight() * 0.5f;
@@ -83,6 +88,9 @@ public class BonusCreator {
                     break;
                 case BRILLIANCE:
                     onBrillianceBonusCatched(bonus, destinationX, destinationY);
+                    break;
+                case SNOWFLAKE:
+                    onSnowflakeBonusCatched(bonus, destinationX, destinationY);
                     break;
             }
         } catch (Exception e) {
@@ -111,8 +119,8 @@ public class BonusCreator {
         goldTweenAnimation.setOnAnimationFinishListener(new TweenAnimation.OnAnimationFinishListener() {
             @Override
             public void onAnimationFinish(final float destX, final float destY) {
-                if (onBonusCahcedListener != null) {
-                    onBonusCahcedListener.onBonusCached(goldSprite);
+                if (onBonusCathcedListener != null) {
+                    onBonusCathcedListener.onBonusCatched(goldSprite);
                 }
             }
         });
@@ -137,12 +145,39 @@ public class BonusCreator {
         brillianceTweenAnimation.setOnAnimationFinishListener(new TweenAnimation.OnAnimationFinishListener() {
             @Override
             public void onAnimationFinish(final float destX, final float destY) {
-                if (onBonusCahcedListener != null) {
-                    onBonusCahcedListener.onBonusCached(brillianceSprite);
+                if (onBonusCathcedListener != null) {
+                    onBonusCathcedListener.onBonusCatched(brillianceSprite);
                 }
             }
         });
         renderLayer.addSprite(brillianceSprite, true, bonusLayer);
+    }
+
+    private void onSnowflakeBonusCatched(final BonusSprite bonus, final float destinationXPosition, final float destinationYPosition) throws IllegalAccessException, InstantiationException{
+        final SnowflakeSprite snowflakeSprite = (SnowflakeSprite) pool.get(SnowflakeSprite.class);
+        snowflakeSprite.setTextureRegion(assetsLoader.getSnowflakeTextureRegion());
+        snowflakeSprite.setWidth(SNOWFLAKE_SIZE);
+        snowflakeSprite.setHeight(SNOWFLAKE_SIZE);
+        //setupSnowflakeBonus(snowflakeSprite);
+        final TweenAnimation tweenAnimation;
+        if (snowflakeSprite.getTweenAnimation() != null) {
+            tweenAnimation = snowflakeSprite.getTweenAnimation();
+        } else {
+            tweenAnimation = new TweenAnimation();
+            snowflakeSprite.setTweenAnimation(tweenAnimation);
+        }
+        animator.createAnimation(tweenAnimation);
+        tweenAnimation.restart(bonus.getX(), bonus.getY(), destinationXPosition, destinationYPosition, SNOWFLAKE_TWEEN_SPEED);
+        tweenAnimation.start();
+        tweenAnimation.setOnAnimationFinishListener(new TweenAnimation.OnAnimationFinishListener() {
+            @Override
+            public void onAnimationFinish(final float destX, final float destY) {
+                if (onBonusCathcedListener != null) {
+                    onBonusCathcedListener.onBonusCatched(snowflakeSprite);
+                }
+            }
+        });
+        renderLayer.addSprite(snowflakeSprite, true, bonusLayer);
     }
 
     private void setupGoldBonus(final BonusSprite goldSprite){
@@ -155,6 +190,12 @@ public class BonusCreator {
         brillianceSprite.setTextureRegion(assetsLoader.getBrillianceTextureRegion());
         brillianceSprite.setWidth(BRILLIANCE_SIZE);
         brillianceSprite.setHeight(BRILLIANCE_SIZE);
+    }
+
+    private void setupSnowflakeBonus(final BonusSprite snowflakeBonus) {
+        snowflakeBonus.setTextureRegion(assetsLoader.getSnowflakeTextureRegion());
+        snowflakeBonus.setWidth(SNOWFLAKE_SIZE);
+        snowflakeBonus.setHeight(SNOWFLAKE_SIZE);
     }
 
     private TileSprite getCorrectTileSpriteForBonus(final TileSprite leftTileSprite, final TileSprite rightTileSprite) {
@@ -177,7 +218,7 @@ public class BonusCreator {
 
     public interface OnBonusCahcedListener {
 
-        void onBonusCached(final BonusSprite bonusSprite);
+        void onBonusCatched(final BonusSprite bonusSprite);
 
     }
 

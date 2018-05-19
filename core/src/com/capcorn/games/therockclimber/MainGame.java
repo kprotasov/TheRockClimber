@@ -62,6 +62,18 @@ public class MainGame extends Game {
 		}
 	}
 
+	public void onContinueVideoRewarded() {
+		if (gameScreen != null) {
+			gameScreen.onContinueVideoRewarded();
+		}
+	}
+
+	public void onX2VideoRewarded() {
+		if (gameScreen != null) {
+			gameScreen.onX2VideoRewarded();
+		}
+	}
+
 	private void initGameScreen() {
 		assetsLoader.createTextures();
 		gameScreen = new GameScreen(assetsLoader, onShowRewardedVideoListener);

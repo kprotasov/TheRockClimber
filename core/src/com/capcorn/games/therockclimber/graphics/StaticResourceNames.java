@@ -9,8 +9,6 @@ package com.capcorn.games.therockclimber.graphics;
 public enum StaticResourceNames {
 
     BACKGROUND("background.png", 1000, 1779),
-    //BLACK_TILE_ATLAS("black_tile_atlas.png", 400, 480),
-    //WHITE_TILE("white_tile_4.png", 200, 480),
     BLACK_TILE_ATLAS("black_tile_atlas.png", 800, 480),
     WHITE_TILE_ATLAS("white_tile_atlas.png", 800, 480),
     WHITE_TILE("white_tile_2.png", 200, 480),
@@ -19,7 +17,9 @@ public enum StaticResourceNames {
     DIALOG_BUTTON("dialog_button.png", 200, 50),
     GOLD("gold.png", 85, 85),
     BRILLIANCE("brilliance.png", 85, 85),
-    RED_BUTTON("red_button.png", 50, 50);
+    RED_BUTTON("red_button.png", 50, 50),
+    PAUSE_BUTTON("pause_button.png", 60, 60),
+    SNOWFLAKE("snowflake.png", 85, 85);
 
     private final String name;
     private final int width;

@@ -8,6 +8,7 @@ package com.capcorn.games.therockclimber;
 
 public interface OnShowRewardedVideoListener {
 
-    void onShowRewardedVideo();
+    void onShowRewardedVideoForContinue();
+    void onShowRewardedVideoForX2();
 
 }

@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.Random;
 
-import javax.xml.soap.Text;
-
 import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.STONE;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
@@ -16,8 +14,10 @@ import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BRIL
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.DIALOG_BUTTON;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.GOLD;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.LOOSING_GAME_DIALOG_BACKGROUND;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.PAUSE_BUTTON;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RAM;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RED_BUTTON;
+import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.SNOWFLAKE;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE_ATLAS;
 
@@ -47,6 +47,7 @@ public class AssetsLoader {
     private TextureRegion loosingGameBackground;
     private TextureRegion dialogButton;
     private TextureRegion redButtonTextureRegion;
+    private TextureRegion pauseButtonTextureRegion;
 
     private Texture ramTexture;
     private TextureRegion ramTextureRegion;
@@ -61,6 +62,8 @@ public class AssetsLoader {
 
     private Texture goldTexture;
     private TextureRegion goldTextureRegion;
+
+    private TextureRegion snowflakeTextureRegion;
 
     private TextureRegion brillianceTextureRegion;
 
@@ -89,7 +92,9 @@ public class AssetsLoader {
         manager.load(RAM.getName(), Texture.class);
         manager.load(GOLD.getName(), Texture.class);
         manager.load(BRILLIANCE.getName(), Texture.class);
-        manager.load(RED_BUTTON.getName(), Text.class);
+        manager.load(RED_BUTTON.getName(), Texture.class);
+        manager.load(PAUSE_BUTTON.getName(), Texture.class);
+        manager.load(SNOWFLAKE.getName(), Texture.class);
         return manager;
     }
 
@@ -127,11 +132,17 @@ public class AssetsLoader {
         goldTexture = manager.get(GOLD.getName());
         goldTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+        Texture snowflakeTexture = manager.get(SNOWFLAKE.getName());
+        snowflakeTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
         ramTexture = manager.get(RAM.getName());
         ramTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         final Texture brillianceTexture = manager.get(BRILLIANCE.getName());
         brillianceTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        final Texture pauseButtonTexture = manager.get(PAUSE_BUTTON.getName());
+        pauseButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         createBackgroundTextureRegion();
         createBlackTileTextureRegions();
@@ -142,6 +153,8 @@ public class AssetsLoader {
         createDialogButton(dialogButtonTexture);
         createBrillianceTextureRegion(brillianceTexture);
         createRedButtonTextureRegion(redButtonTexture);
+        createSnowflakeTextureRegion(snowflakeTexture);
+        createPauseButtonTextureRegion(pauseButtonTexture);
     }
 
     public void dispose() {
@@ -162,6 +175,8 @@ public class AssetsLoader {
         manager.unload(GOLD.getName());
         manager.unload(BRILLIANCE.getName());
         manager.unload(RED_BUTTON.getName());
+        manager.unload(PAUSE_BUTTON.getName());
+        manager.unload(SNOWFLAKE.getName());
         manager.dispose();
     }
 
@@ -227,6 +242,14 @@ public class AssetsLoader {
 
     public TextureRegion getRedButtonTextureRegion() {
         return redButtonTextureRegion;
+    }
+
+    public TextureRegion getSnowflakeTextureRegion() {
+        return snowflakeTextureRegion;
+    }
+
+    public TextureRegion getPauseButtonTextureRegion() {
+        return pauseButtonTextureRegion;
     }
 
     private Animation createCharacterTextureRegionRight() {
@@ -361,6 +384,16 @@ public class AssetsLoader {
     private void createDialogButton(final Texture dialogButtonTexture) {
         dialogButton = new TextureRegion(dialogButtonTexture, 0, 0, DIALOG_BUTTON.getWidth(), DIALOG_BUTTON.getHeight());
         dialogButton.flip(false, true);
+    }
+
+    private void createSnowflakeTextureRegion(final Texture snowflakeTexure) {
+        snowflakeTextureRegion = new TextureRegion(snowflakeTexure, 0, 0, SNOWFLAKE.getWidth(), SNOWFLAKE.getHeight());
+        snowflakeTextureRegion.flip(false, true);
+    }
+
+    private void createPauseButtonTextureRegion(final Texture pauseButtonTexture) {
+        pauseButtonTextureRegion = new TextureRegion(pauseButtonTexture, 0, 0, PAUSE_BUTTON.getWidth(), PAUSE_BUTTON.getHeight());
+        pauseButtonTextureRegion.flip(false, true);
     }
 
 }

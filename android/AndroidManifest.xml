@@ -36,8 +36,6 @@
 
         </activity>
 
-        <activity android:name=".rewardedvideo.RewardedVideoActivity" />
-
     </application>
 
 </manifest>

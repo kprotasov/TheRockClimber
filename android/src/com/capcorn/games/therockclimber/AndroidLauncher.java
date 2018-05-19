@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.capcorn.games.therockclimber.MainGame;
 import com.capcorn.settings.ApplicationConstants;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
@@ -15,8 +14,17 @@ import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
 public class AndroidLauncher extends AndroidApplication implements RewardedVideoAdListener, OnShowRewardedVideoListener {
 
+	private enum RewardedType {
+
+		CONTINUE,
+		X_2
+
+	}
+
 	private RewardedVideoAd rewardedVideoAd;
 	private MainGame mainGame;
+
+	private RewardedType currentRewardedType = RewardedType.CONTINUE;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -32,17 +40,25 @@ public class AndroidLauncher extends AndroidApplication implements RewardedVideo
 		rewardedVideoAd.setRewardedVideoAdListener(this);
 
 		loadRewardedVideo();
+		Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show();
 	}
 
 	private void loadRewardedVideo() {
-		rewardedVideoAd.loadAd(ApplicationConstants.AD_MOB_CHARACTER_SELECTOR_IDENTIFIER, new AdRequest.Builder().build());
+		rewardedVideoAd.loadAd(/*ApplicationConstants.AD_MOB_GAME_SCREEN_IDENTIFIER*/
+				"ca-app-pub-3940256099942544/5224354917", new AdRequest.Builder().build());
+		Toast.makeText(this, "start load rewarded video", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
 	public void onRewarded(RewardItem rewardItem) {
 		loadRewardedVideo();
-		Toast.makeText(this, "onRewarded! currency: " + rewardItem.getType() + "  amount: " +
-				rewardItem.getAmount(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "onRewarded", Toast.LENGTH_LONG).show();
+		if (currentRewardedType.equals(RewardedType.CONTINUE)) {
+			mainGame.onContinueVideoRewarded();
+		} else if (currentRewardedType.equals(RewardedType.X_2)) {
+			mainGame.onX2VideoRewarded();
+		}
+		//Toast.makeText(this, "onRewarded type " + currentRewardedType, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
@@ -50,10 +66,12 @@ public class AndroidLauncher extends AndroidApplication implements RewardedVideo
 		if (mainGame != null && rewardedVideoAd.isLoaded()) {
 			mainGame.onRewardedVideoLoaded();
 		}
+		Toast.makeText(this, "rewarded video loaded", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
 	protected void onResume() {
+		rewardedVideoAd.setRewardedVideoAdListener(this);
 		rewardedVideoAd.resume(this);
 		if (mainGame != null) {
 			if (rewardedVideoAd.isLoaded()) {
@@ -93,6 +111,7 @@ public class AndroidLauncher extends AndroidApplication implements RewardedVideo
 			mainGame.onRewardedVideoUnloaded();
 		}
 		loadRewardedVideo();
+		Toast.makeText(this, "onRewardedVideoClosed", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
@@ -105,13 +124,33 @@ public class AndroidLauncher extends AndroidApplication implements RewardedVideo
 		if (mainGame != null) {
 			mainGame.onRewardedVideoUnloaded();
 		}
-		loadRewardedVideo();
+		//loadRewardedVideo();
+		Toast.makeText(this, "onRewardedVideoFailedToLoad", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
-	public void onShowRewardedVideo() {
-		if (rewardedVideoAd.isLoaded()) {
-			rewardedVideoAd.show();
-		}
+	public void onShowRewardedVideoForContinue() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (rewardedVideoAd.isLoaded()) {
+					rewardedVideoAd.show();
+					currentRewardedType = RewardedType.CONTINUE;
+				}
+			}
+		});
+	}
+
+	@Override
+	public void onShowRewardedVideoForX2() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (rewardedVideoAd.isLoaded()) {
+					rewardedVideoAd.show();
+					currentRewardedType = RewardedType.X_2;
+				}
+			}
+		});
 	}
 }

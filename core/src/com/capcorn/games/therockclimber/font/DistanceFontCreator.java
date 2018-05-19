@@ -15,18 +15,22 @@ public class DistanceFontCreator {
 
 	private static final String FONT = "fonts/Lemonada-Regular.ttf";
 	private static final int DEFAULT_FONT_SIZE = 20;
-	private static final Color FONT_COLOR = Color.valueOf("455060");//Color.valueOf("ffffff");
+	private static final Color FONT_COLOR = Color.valueOf("455060");
 	private static final Color BORDER_COLOR = Color.valueOf("132338");
 
 	public static BitmapFont createFont(final int fontSize) {
-		return createFont(fontSize, true);
+		return createFont(fontSize, true, FONT_COLOR);
 	}
 
 	public static BitmapFont createFont(final int fontSize, final boolean hasBorder) {
+		return createFont(fontSize, hasBorder, FONT_COLOR);
+	}
+
+	public static BitmapFont createFont(final int fontSize, final boolean hasBorder, final Color fontColor) {
 		final FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT));
 		final FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		parameter.size = fontSize;
-		parameter.color = FONT_COLOR;
+		parameter.color = fontColor;
 		if (hasBorder) {
 			parameter.borderColor = BORDER_COLOR;
 			parameter.borderWidth = 0.8f;
