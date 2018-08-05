@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_number": "769757375361",
+    "firebase_url": "https://therockclimberlive.firebaseio.com",
+    "project_id": "therockclimberlive",
+    "storage_bucket": "therockclimberlive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769757375361:android:64922919670e44d1",
+        "android_client_info": {
+          "package_name": "com.capcorn.games.therockclimber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "769757375361-ui5m3bg3bnf4v94cjj6943ek6qrgpdks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfJEPFLsnd4smqBQE7nlcfPy7IaWur4Fk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-8339160487325972~6905619046"
+    }
+  ],
+  "configuration_version": "1"
+}
