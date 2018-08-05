@@ -11,5 +11,6 @@ eclipse.project {
 }
 
 dependencies {
+    implementation 'com.google.android.gms:play-services-ads:12.0.1'
     compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 }

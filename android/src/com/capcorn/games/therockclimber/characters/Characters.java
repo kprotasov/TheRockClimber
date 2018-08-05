@@ -13,11 +13,23 @@ import com.google.gson.annotations.SerializedName;
 public enum Characters {
 
     BASE(AnimatedResourceNames.BASE_CHARACTER.getName(), 0, R.drawable.character_base,
-            R.drawable.character_base, true, "default", true), // as default
-    FORESTER(AnimatedResourceNames.FORESTER_CHARACTER.getName(), /*1000*/100, R.drawable.character_forester,
+            R.drawable.character_base, true, "john", true), // as default
+    FORESTER(AnimatedResourceNames.FORESTER_CHARACTER.getName(), 1000, R.drawable.character_forester,
             R.drawable.character_forester_gray, false, "forester", false),
     ZOMBIE(AnimatedResourceNames.ZOMBIE_CHARACTER.getName(), 2000, R.drawable.character_zombie,
             R.drawable.character_zombie_gray, false, "zombie", false);
+
+    public static String getNamesList() {
+        StringBuilder result = new StringBuilder();
+        result.append("[");
+        Characters[] values = Characters.values();
+        for (Characters character : values) {
+            result.append("\"" + character.name() + "\"" + ",");
+        }
+        result.replace(result.length() - 1, result.length(), "");
+        result.append("]");
+        return result.toString();
+    }
 
     private String name;
     private long price;

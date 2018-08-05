@@ -20,6 +20,7 @@ import com.capcorn.game.engine.sprite.AnimatedPolygonSprite;
 import com.capcorn.game.engine.sprite.AnimatedSprite;
 import com.capcorn.game.engine.sprite.CircleSprite;
 import com.capcorn.game.engine.sprite.LineSprite;
+import com.capcorn.game.engine.sprite.RectangleSprite;
 import com.capcorn.game.engine.sprite.ShapeSprite;
 import com.capcorn.game.engine.sprite.Sprite;
 import com.capcorn.game.engine.sprite.SpriteBase;
@@ -194,6 +195,13 @@ public class RenderLayer {
                 shapeRenderer.rectLine(lineSprite.getX(), lineSprite.getY(), lineSprite.getEndX(), lineSprite.getEndY(), lineSprite.getDepth());
                 shapeRenderer.end();
                 break;
+            case RECTANGLE:
+                final RectangleSprite rectangleSprite = (RectangleSprite)sprite;
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                shapeRenderer.setColor(rectangleSprite.getColor());
+                shapeRenderer.rect(rectangleSprite.getX(), rectangleSprite.getY(), rectangleSprite.getWidth(), rectangleSprite.getHeight());
+                shapeRenderer.end();
+
         }
     }
 
