@@ -33,10 +33,12 @@ public class CharacterBuyStore {
 
     public Characters[] load() {
         final String charactersJson = getSharedPreferences().getString(RECORD_CHARACTER_BUY_STORE, WRONG_STRING);
-        if (charactersJson.equals(WRONG_STRING)) {
+        String values = Characters.getNamesList();
+        if (charactersJson.equals(WRONG_STRING) || charactersJson.equals(values)) {
             return Characters.values();
+        } else {
+            return convertJsonToCharacters(gson.fromJson(charactersJson, Characters.CharacterJson[].class));
         }
-        return convertJsonToCharacters(gson.fromJson(charactersJson, Characters.CharacterJson[].class));
     }
 
     public void save(final Characters[] characters) {

@@ -8,8 +8,10 @@ package com.capcorn.settings;
 
 public class ApplicationConstants {
 
-    public static final String AD_MOB_APPLICATION_IDENTIFIER = "ca-app-pub-8339160487325972~9830189610";
-    public static final String AD_MOB_CHARACTER_SELECTOR_IDENTIFIER = "ca-app-pub-8339160487325972/8135455255";
-    public static final String AD_MOB_GAME_SCREEN_IDENTIFIER = "ca-app-pub-8339160487325972/1028911144";
+    public static final String AD_MOB_APPLICATION_IDENTIFIER = "ca-app-pub-8339160487325972~6905619046";
+
+    public static final String AD_MOB_CHARACTER_SELECTOR_IDENTIFIER = "ca-app-pub-8339160487325972/7616065487";
+    public static final String AD_MOB_GAME_SCREEN_IDENTIFIER = "ca-app-pub-8339160487325972/4974107193";
+    public static final String AD_MOB_RESTART_INTERSTITIAL_IDENTIFIER = "ca-app-pub-8339160487325972/3633105365";
 
 }

@@ -6,6 +6,8 @@
 
     <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="27" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -35,6 +37,10 @@
             </intent-filter>
 
         </activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="b7d3959c8216bc4a80545f7680794947efa859c2" />
 
     </application>
 
