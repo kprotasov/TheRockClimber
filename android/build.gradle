@@ -1,5 +1,5 @@
 android {
-    buildToolsVersion '27.0.3'
+    buildToolsVersion "25.0.2"
     compileSdkVersion 27
     sourceSets {
         main {
@@ -12,7 +12,7 @@ android {
             jniLibs.srcDirs = ['libs']
         }
 
-        androidTest.setRoot('tests')
+        instrumentTest.setRoot('tests')
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
@@ -123,10 +123,9 @@ idea {
     }
 }
 dependencies {
-    implementation 'com.google.android.gms:play-services-ads:12.0.1'
     compile 'com.android.support:support-v4:27.0.2'
     compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.google.firebase:firebase-core:12.0.1'
-    compile 'com.google.firebase:firebase-ads:12.0.1'
+    compile 'com.google.firebase:firebase-core:11.6.2'
+    compile 'com.google.firebase:firebase-ads:11.6.2'
     compile 'com.google.code.gson:gson:2.2.4'
 }

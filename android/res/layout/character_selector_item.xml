@@ -9,22 +9,11 @@
     android:gravity="center">
 
     <TextView
-        android:id="@+id/nameText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/name_text_size"
-        android:layout_marginTop="50dp"
-        android:textAllCaps="true"
-        android:textColor="@color/color_black"
-        tools:text="John"
-        android:layout_gravity="center_horizontal"/>
-
-    <TextView
         android:id="@+id/priceText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/character_price_text_size"
-        android:layout_marginTop="16dp"
+        android:textSize="@dimen/start_text_size"
+        android:layout_marginTop="50dp"
         android:textColor="@color/color_black"
         tools:text="2000"
         android:layout_gravity="center_horizontal"/>

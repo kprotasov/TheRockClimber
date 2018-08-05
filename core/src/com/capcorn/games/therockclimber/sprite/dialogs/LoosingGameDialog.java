@@ -23,7 +23,7 @@ public class LoosingGameDialog extends Sprite {
     private static final String MONEY_TEXT = "You money: %s";
     private static final String RESTART_BUTTON_TEXT = "Restart";
     private static final String CONTINUE_BUTTON_TEXT = "Continue";
-    private static final String X_2_BUTTON_TEXT = "x1.5";
+    private static final String X_2_BUTTON_TEXT = "x2";
 
     private static final int TITLE_FONT_SIZE = 30;
     private static final int BUTTON_CLICKABLE_ZONE = 30;

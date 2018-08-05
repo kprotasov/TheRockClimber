@@ -9,7 +9,6 @@ public class ShapeSprite implements SpriteBase {
 
     public enum Type{
         CIRCLE,
-        RECTANGLE,
         LINE;
     }
 

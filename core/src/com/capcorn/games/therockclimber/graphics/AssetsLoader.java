@@ -1,8 +1,6 @@
 package com.capcorn.games.therockclimber.graphics;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import java.util.Random;
 
 import static com.capcorn.games.therockclimber.graphics.AnimatedResourceNames.STONE;
-import static com.capcorn.games.therockclimber.graphics.SoundResourceName.*;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BACKGROUND;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BLACK_TILE_ATLAS;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.BRILLIANCE;
@@ -74,13 +71,6 @@ public class AssetsLoader {
 
     private AssetManager manager;
 
-    private Sound soundGold;
-    private Sound soundBrilliance;
-    private Sound soundFall;
-    private Music backMusic1;
-    private Music musicWind;
-    private Music musicStone;
-
     public AssetsLoader() {
         tileRandom = new Random();
     }
@@ -105,12 +95,6 @@ public class AssetsLoader {
         manager.load(RED_BUTTON.getName(), Texture.class);
         manager.load(PAUSE_BUTTON.getName(), Texture.class);
         manager.load(SNOWFLAKE.getName(), Texture.class);
-        manager.load(SOUND_GOLD, Sound.class);
-        manager.load(SOUND_BRILLIANCE, Sound.class);
-        manager.load(BACK_MUSIC_1, Music.class);
-        manager.load(MUSIC_WIND, Music.class);
-        manager.load(MUSIC_STONE, Music.class);
-        manager.load(SOUND_FALL, Sound.class);
         return manager;
     }
 
@@ -160,13 +144,6 @@ public class AssetsLoader {
         final Texture pauseButtonTexture = manager.get(PAUSE_BUTTON.getName());
         pauseButtonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        soundGold = manager.get(SOUND_GOLD);
-        soundBrilliance = manager.get(SOUND_BRILLIANCE);
-        backMusic1 = manager.get(BACK_MUSIC_1);
-        musicWind = manager.get(MUSIC_WIND);
-        musicStone = manager.get(MUSIC_STONE);
-        soundFall = manager.get(SOUND_FALL);
-
         createBackgroundTextureRegion();
         createBlackTileTextureRegions();
         createWhiteTileTextureRegions();
@@ -200,12 +177,6 @@ public class AssetsLoader {
         manager.unload(RED_BUTTON.getName());
         manager.unload(PAUSE_BUTTON.getName());
         manager.unload(SNOWFLAKE.getName());
-        manager.unload(SOUND_GOLD);
-        manager.unload(SOUND_BRILLIANCE);
-        manager.unload(BACK_MUSIC_1);
-        manager.unload(MUSIC_WIND);
-        manager.unload(MUSIC_STONE);
-        manager.unload(SOUND_FALL);
         manager.dispose();
     }
 
@@ -279,32 +250,6 @@ public class AssetsLoader {
 
     public TextureRegion getPauseButtonTextureRegion() {
         return pauseButtonTextureRegion;
-    }
-
-    public Sound getSoundGold() {
-        return soundGold;
-    }
-
-    public Sound getSoundBrilliance() {
-        return soundBrilliance;
-    }
-
-    public Music getMusicWind() {
-        return musicWind;
-    }
-
-    public Music getMusicStone() {
-        return musicStone;
-    }
-
-    public Music getBackMusic1() {
-        backMusic1.setLooping(true);
-        backMusic1.setVolume(0.6f);
-        return backMusic1;
-    }
-
-    public Sound getSoundFall() {
-        return soundFall;
     }
 
     private Animation createCharacterTextureRegionRight() {
@@ -384,12 +329,12 @@ public class AssetsLoader {
         final int count = blackTileLeftTextureRegions.length;
         for (int i = 0; i < count; i++) {
             final TextureRegion textureRegionLeft = new TextureRegion(blackTileTexture, (BLACK_TILE_ATLAS.getWidth() / count) * i,
-                    0, (BLACK_TILE_ATLAS.getWidth() / count) - 1, BLACK_TILE_ATLAS.getHeight());
+                    0, (BLACK_TILE_ATLAS.getWidth() / count), BLACK_TILE_ATLAS.getHeight());
             textureRegionLeft.flip(true, true);
             blackTileLeftTextureRegions[i] = textureRegionLeft;
 
             final TextureRegion textureRegionRight = new TextureRegion(blackTileTexture, (BLACK_TILE_ATLAS.getWidth() / count) * i,
-                    0, (BLACK_TILE_ATLAS.getWidth() / count) - 1, BLACK_TILE_ATLAS.getHeight());
+                    0, (BLACK_TILE_ATLAS.getWidth() / count), BLACK_TILE_ATLAS.getHeight());
             textureRegionRight.flip(false, true);
             blackTileRightTextureRegions[i] = textureRegionRight;
         }
@@ -399,12 +344,12 @@ public class AssetsLoader {
         final int count = whiteTileLeftTextureRegions.length;
         for (int i = 0; i < count; i++) {
             final TextureRegion textureRegionLeft = new TextureRegion(whiteTileTexture, (WHITE_TILE_ATLAS.getWidth() / count) * i,
-                    0, (WHITE_TILE_ATLAS.getWidth() / count) - 1, WHITE_TILE_ATLAS.getHeight());
+                    0, (WHITE_TILE_ATLAS.getWidth() / count), WHITE_TILE_ATLAS.getHeight());
             textureRegionLeft.flip(true, true);
             whiteTileLeftTextureRegions[i] = textureRegionLeft;
 
             final TextureRegion textureRegionRight = new TextureRegion(whiteTileTexture, (WHITE_TILE_ATLAS.getWidth() / count) * i,
-                    0, (WHITE_TILE_ATLAS.getWidth() / count) - 1, WHITE_TILE_ATLAS.getHeight());
+                    0, (WHITE_TILE_ATLAS.getWidth() / count), WHITE_TILE_ATLAS.getHeight());
             textureRegionRight.flip(false, true);
             whiteTileRightTextureRegions[i] = textureRegionRight;
         }

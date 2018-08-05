@@ -2,14 +2,12 @@ package com.capcorn.games.therockclimber.characters;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.capcorn.games.therockclimber.R;
 import com.capcorn.settings.ApplicationConstants;
@@ -34,8 +32,6 @@ public class CharacterSelectorActivity extends Activity implements RewardedVideo
     private static final String STATE_BUY = "com.capcorn.games.therockclimber.characters.STATE_BUY";
     private static final String STATE_ADD_MONEY = "com.capcorn.games.therockclimber.characters.STATE_ADD_MONEY";
     private static final long REWARDED_VALUE = 100;
-
-    private static final long LOAD_REWARDED_VIDEO_DELAY = 30 * 1000;
 
     private int currentBackgroundPosition = 0;
     private ArrayList<Integer> backgroundsList;
@@ -80,14 +76,20 @@ public class CharacterSelectorActivity extends Activity implements RewardedVideo
         setupMoneyText();
 
         final Characters[] characters = characterBuyStore.load();
+        final String selectedCharacterName = selectedCharacterStore.load();
 
         int selectedItemPosition = 0;
+        int positionCount = 0;
 
         for (Characters character : characters) {
-            if (character.isSelected()) {
-                break;
+            if (selectedCharacterName.equals(character.getName())) {
+                character.setSelected(true);
+                setupSelectButton(character);
+                selectedItemPosition = positionCount;
+            } else {
+                character.setSelected(false);
             }
-            selectedItemPosition++;
+            positionCount++;
         }
 
         adapter = new CharacterPagerAdapter(this, R.layout.character_selector_item, characters);
@@ -195,8 +197,6 @@ public class CharacterSelectorActivity extends Activity implements RewardedVideo
     }
 
     private void loadRewardedVideo() {
-        //Toast.makeText(this, "start to load", Toast.LENGTH_LONG).show();
-        //rewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917", new AdRequest.Builder().build());
         rewardedVideoAd.loadAd(ApplicationConstants.AD_MOB_CHARACTER_SELECTOR_IDENTIFIER, new AdRequest.Builder().build());
     }
 
@@ -213,8 +213,7 @@ public class CharacterSelectorActivity extends Activity implements RewardedVideo
 
     @Override
     public void onRewardedVideoAdLoaded() {
-        //Log.v("CharacterSelectorActivity", "rewarded video loaded");
-        //Toast.makeText(this, "loaded", Toast.LENGTH_LONG).show();
+        Log.v("CharacterSelectorActivity", "rewarded video loaded");
     }
 
     @Override
@@ -246,19 +245,7 @@ public class CharacterSelectorActivity extends Activity implements RewardedVideo
 
     @Override
     public void onRewardedVideoAdFailedToLoad(int i) {
-        //Toast.makeText(this, "failed to load", Toast.LENGTH_LONG).show();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                loadRewardedVideo();
-            }
-        }, LOAD_REWARDED_VIDEO_DELAY);
-    }
-
-    @Override
-    public void onRewardedVideoCompleted() {
-
+        loadRewardedVideo();
     }
 
     private void createBackgrounds() {
