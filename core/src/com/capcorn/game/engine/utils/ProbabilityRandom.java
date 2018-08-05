@@ -15,7 +15,7 @@ public class ProbabilityRandom {
 
     private static final int MAX_PROBABILITY = 100;
     private final List<Integer> probabilitiesList;
-    private final List<Integer> randomList;
+    private List<Integer> randomList;
     private final Random random;
 
     public ProbabilityRandom(int probability) {
@@ -26,12 +26,19 @@ public class ProbabilityRandom {
             probabilitiesList.add(i);
         }
         Collections.shuffle(probabilitiesList);
-        randomList = probabilitiesList.subList(0, probability);
+        createRandomList(probability);
+    }
 
+    public void changeProbability(final int probability) {
+        createRandomList(probability);
     }
 
     public boolean get() {
         final Integer variant = random.nextInt(MAX_PROBABILITY);
         return randomList.contains(variant);
+    }
+
+    private void createRandomList(final int probability) {
+        randomList = probabilitiesList.subList(0, probability);
     }
 }
