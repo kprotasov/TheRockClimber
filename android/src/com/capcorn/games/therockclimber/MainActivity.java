@@ -11,24 +11,28 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.capcorn.games.therockclimber.characters.CharacterSelectorActivity;
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by kprotasov on 03.06.2017.
  */
 
-public class MainActivity extends Activity{
+public class MainActivity extends Activity {
 
     private VideoView videoView;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         this.setContentView(R.layout.main_activity);
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
         videoView = findViewById(R.id.videoView);
-        final String videoPath =  "android.resource://" + getPackageName() + "/" + R.raw.background_test;
+        final String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.background_test;
         final Uri videoUri = Uri.parse(videoPath);
 
         videoView.setVideoURI(videoUri);
@@ -61,6 +65,7 @@ public class MainActivity extends Activity{
                 startActivity(characterIntent);
             }
         });
+
     }
 
     @Override

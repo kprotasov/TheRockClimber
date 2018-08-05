@@ -7,6 +7,7 @@ import com.capcorn.game.engine.pool.ObjectPool;
 import com.capcorn.game.engine.utils.BinaryRandom;
 import com.capcorn.games.therockclimber.entity.TileEntity;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
+import com.capcorn.games.therockclimber.sound.MusicManager;
 import com.capcorn.games.therockclimber.sprite.bonus.BonusSprite;
 import com.capcorn.games.therockclimber.sprite.bonus.BonusType;
 import com.capcorn.games.therockclimber.sprite.bonus.BrillianceSprite;
@@ -35,15 +36,17 @@ public class BonusCreator {
     private final Animator animator;
     private final int bonusLayer;
     private final BinaryRandom binaryRandom;
+    private final MusicManager musicManager;
 
     private OnBonusCahcedListener onBonusCathcedListener;
 
-    public BonusCreator(final ObjectPool pool, final RenderLayer renderLayer, final AssetsLoader assetsLoader, final Animator animator, final int bonusLayer) {
+    public BonusCreator(final ObjectPool pool, final RenderLayer renderLayer, final AssetsLoader assetsLoader, final MusicManager musicManager, final Animator animator, final int bonusLayer) {
         this.pool = pool;
         this.renderLayer = renderLayer;
         this.assetsLoader = assetsLoader;
         this.animator = animator;
         this.bonusLayer = bonusLayer;
+        this.musicManager = musicManager;
         binaryRandom = new BinaryRandom();
     }
 
@@ -102,6 +105,8 @@ public class BonusCreator {
     }
 
     private void onGoldBonusCatched(final BonusSprite bonus, final float destinationXPosition, final float destinationYPosition) throws IllegalAccessException, InstantiationException{
+        musicManager.playSoundGold();
+
         final GoldSprite goldSprite = (GoldSprite) pool.get(GoldSprite.class);
         goldSprite.setTextureRegion(assetsLoader.getGoldTextureRegion());
         goldSprite.setWidth(GOLD_SIZE);
@@ -128,6 +133,8 @@ public class BonusCreator {
     }
 
     private void onBrillianceBonusCatched(final BonusSprite bonus, final float destinationXPosition, final float destinationYPosition) throws IllegalAccessException, InstantiationException{
+        musicManager.playSoundBrilliance();
+
         final BrillianceSprite brillianceSprite = (BrillianceSprite) pool.get(BrillianceSprite.class);
         brillianceSprite.setTextureRegion(assetsLoader.getBrillianceTextureRegion());
         brillianceSprite.setWidth(BRILLIANCE_SIZE);
@@ -154,11 +161,13 @@ public class BonusCreator {
     }
 
     private void onSnowflakeBonusCatched(final BonusSprite bonus, final float destinationXPosition, final float destinationYPosition) throws IllegalAccessException, InstantiationException{
+        musicManager.stopMusicWind();
+        musicManager.playMusicWind();
+
         final SnowflakeSprite snowflakeSprite = (SnowflakeSprite) pool.get(SnowflakeSprite.class);
         snowflakeSprite.setTextureRegion(assetsLoader.getSnowflakeTextureRegion());
         snowflakeSprite.setWidth(SNOWFLAKE_SIZE);
         snowflakeSprite.setHeight(SNOWFLAKE_SIZE);
-        //setupSnowflakeBonus(snowflakeSprite);
         final TweenAnimation tweenAnimation;
         if (snowflakeSprite.getTweenAnimation() != null) {
             tweenAnimation = snowflakeSprite.getTweenAnimation();
