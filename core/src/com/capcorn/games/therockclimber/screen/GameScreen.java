@@ -16,7 +16,7 @@ import com.capcorn.game.engine.sprite.TextSprite;
 import com.capcorn.game.engine.utils.BinaryRandom;
 import com.capcorn.game.engine.utils.PositionUtils;
 import com.capcorn.game.engine.utils.ProbabilityRandom;
-import com.capcorn.games.therockclimber.OnShowAdListener;
+import com.capcorn.games.therockclimber.OnShowRewardedVideoListener;
 import com.capcorn.games.therockclimber.creator.BonusCreator;
 import com.capcorn.games.therockclimber.creator.TileCreator;
 import com.capcorn.games.therockclimber.effects.CameraShakeEffect;
@@ -30,8 +30,6 @@ import com.capcorn.games.therockclimber.settings.Settings;
 import com.capcorn.games.therockclimber.settings.store.BestScoreStore;
 import com.capcorn.games.therockclimber.settings.store.MoneyStore;
 import com.capcorn.games.therockclimber.settings.store.ShowedRewardedVideoStore;
-import com.capcorn.games.therockclimber.sound.MusicManager;
-import com.capcorn.games.therockclimber.sprite.FogBackgroundSprite;
 import com.capcorn.games.therockclimber.sprite.bonus.BonusSprite;
 import com.capcorn.games.therockclimber.sprite.bonus.BonusType;
 import com.capcorn.games.therockclimber.sprite.bonus.BrillianceSprite;
@@ -52,7 +50,7 @@ import java.util.ArrayList;
  * Time: 17:00
  */
 
-public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.OnLoosingDialogActionListener, BonusCreator.OnBonusCahcedListener {
+public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.OnLoosingDialogActionListener, BonusCreator.OnBonusCahcedListener{
 
     enum GameState {
         PAUSE,
@@ -85,7 +83,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private final RenderLayer renderLayer;
     private final Settings.ScreenSize screenSize;
     private final OrthographicCamera camera;
-    //private final FPSLogger fps;
+    private final FPSLogger fps;
     private final ObjectPool pool;
     private final Animator animator;
     private final BitmapFont gameFont;
@@ -93,12 +91,10 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private ClickToStartTextSprite clickToStartTextSprite;
     private BonusCreator bonusCreator;
     private Sprite pauseButton;
-    private OnShowAdListener onShowAdListener;
+    private OnShowRewardedVideoListener onShowRewardedVideoListener;
     private GameState gameState;
     private boolean isRewardedVideoLoaded = false;
     private Sprite redButton;
-    private FogBackgroundSprite fogBackgroundSprite;
-    private MusicManager musicManager;
 
     private BestScoreStore bestScoreStore;
     private MoneyStore moneyStore;
@@ -106,9 +102,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
     private TextSprite distanceText;
     private long distance = 0;
-    private static final long MONEY_RIGHT_OFFSET = 100;
     private TextSprite moneyText;
-    private GoldSprite moneyIcon;
     private long moneyCount = 0;
     private long currentGameMoneyCount = 0;
 
@@ -132,27 +126,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private ProbabilityRandom snowflakeProbabilityRandom;
     private ProbabilityRandom stoneRandom;
 
-    private ProbabilityRandom interstitialBinaryRandom;
-
-    // snowflake params
-    private int SNOWFLAKE_PROBABILITY = 20;
-    private long SNOWFLAKE_START_OFFSET = 30;
-    private long SNOWFLAKE_NEXT_OFFSET = 30;
-    private long currentSnowflakeOffset = 0;
-
-    // Gold, brilliance rain params
-    private final long GOLD_REWARD_BETWEEN_DISTANCE = 100;
-    private final long GOLD_REWARD_PERIOD = 20;
-    private long goldRewardIncrement = -1;
-    private long goldRewardPeriodIncrement = 0;
-    private ProbabilityRandom goldDefaultProbabilityRandom = new ProbabilityRandom(15);
-    private ProbabilityRandom goldRewardProbabilityRandom = new ProbabilityRandom(100);
-    private final long BRILLIANCE_REWARD_BETWEEN_DISTANCE = 500;
-    private final long BRILLIANCE_REWARD_PERIOD = 10;
-    private long brillianceRewardIncrement = -1;
-    private long brillianceRewardPeriodIncrement = 0;
-    private ProbabilityRandom brillianceDefaultProbabilityRandom = new ProbabilityRandom(3);
-    private ProbabilityRandom brillianceRewardProbabilityRandom = new ProbabilityRandom(100);
+    private long SNOWFLAKE_START_OFFSET = 50;
 
     private static final int BACKGROUND_LAYER = 0;
     private static final int TILE_LAYER = 1;
@@ -160,19 +134,18 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private static final int CHARACTER_LAYER = 3;
     private static final int SPRITES_LAYER = 4;
     private static final int TEXT_LAYER = 5;
-    private static final int FOG_LAYER = 6;
-    private static final int LOOSING_GAME_DIALOG_LAYER = 7;
-    private static final int CLICK_TO_START_LAYER = 8;
-    private static final int RED_BUTTON_LAYER = 9;
-    private static final int PAUSE_BUTTON_LAYER = 10;
+    private static final int LOOSING_GAME_DIALOG_LAYER = 6;
+    private static final int CLICK_TO_START_LAYER = 7;
+    private static final int RED_BUTTON_LAYER = 8;
+    private static final int PAUSE_BUTTON_LAYER = 8;
 
-    public GameScreen(final AssetsLoader assetsLoader, final OnShowAdListener onShowAdListener) {
+    public GameScreen(final AssetsLoader assetsLoader, final OnShowRewardedVideoListener onShowRewardedVideoListener) {
         this.assetsLoader = assetsLoader;
         Gdx.input.setInputProcessor(new InputHandler(this));
 
-        this.onShowAdListener = onShowAdListener;
+        this.onShowRewardedVideoListener = onShowRewardedVideoListener;
 
-        //fps = new FPSLogger();
+        fps = new FPSLogger();
         screenSize = Settings.getScreenSize();
         camera = new OrthographicCamera();
         camera.setToOrtho(true, screenSize.WIDTH, screenSize.HEIGHT);
@@ -186,7 +159,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         CHARACTER_Y_POSITION = screenSize.HEIGHT - 246;
 
         renderLayer = new RenderLayer(camera, Color.FOREST, screenSize.WIDTH, screenSize.HEIGHT);
-        //renderLayer.showLogs(true);
+        renderLayer.showLogs(true);
         final Color topColor = new Color(70 / 255.0f, 168 / 255.0f, 255 / 255.0f, 1);
         final Color bottomColor = new Color(53 / 255.0f, 255 / 255.0f, 205 / 255.0f, 1);
         renderLayer.setColor(topColor, topColor, bottomColor, bottomColor);
@@ -201,19 +174,14 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         tiles = tileCreator.createTiles();
         tileSprites = new ArrayList<TileSprite>(HORIZONTAL_TILE_COUNT * VERTICAL_TILE_COUNT);
 
-        musicManager = new MusicManager(assetsLoader);
-        bonusCreator = new BonusCreator(pool, renderLayer, assetsLoader, musicManager, animator, BONUS_LAYER);
+        bonusCreator = new BonusCreator(pool, renderLayer, assetsLoader, animator, BONUS_LAYER);
 
-        redButton = new Sprite(assetsLoader.getRedButtonTextureRegion(), screenSize.WIDTH / 2, 50);
+        redButton = new Sprite(assetsLoader.getRedButtonTextureRegion(), screenSize.WIDTH/2, 50);
 
         gameState = GameState.PLAY;
 
-        musicManager.playMusicBack1();
-
         initGameObjects();
         createDefaultTiles();
-
-
     }
 
     private void initGameObjects() {
@@ -253,25 +221,14 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
             goldBonusRandom = new ProbabilityRandom(15);
             brillianceBonusRandom = new ProbabilityRandom(3);
-            snowflakeProbabilityRandom = new ProbabilityRandom(SNOWFLAKE_PROBABILITY);
+            snowflakeProbabilityRandom = new ProbabilityRandom(1);
             stoneRandom = new ProbabilityRandom(15);
             binaryRandom = new BinaryRandom();
 
-            interstitialBinaryRandom = new ProbabilityRandom(30);
-
             distanceText = new TextSprite("0m", gameFont, 50, 30);
             renderLayer.addTextSprite(distanceText, TEXT_LAYER);
-
-            final float moneyFontWidth = FontUtils.getFontWidth(gameFont, "0");
-            final float moneyFontXPosition = screenSize.WIDTH - moneyFontWidth - MONEY_RIGHT_OFFSET;
-
-            moneyText = new TextSprite("0", gameFont, moneyFontXPosition, 30);
+            moneyText = new TextSprite("0", gameFont, screenSize.WIDTH - FontUtils.getFontWidth(gameFont, "0") - 50, 30);
             renderLayer.addTextSprite(moneyText, TEXT_LAYER);
-            moneyIcon = new GoldSprite(assetsLoader.getGoldTextureRegion(), moneyFontXPosition + moneyFontWidth + 10, 27, 25, 25);
-            renderLayer.addSprite(moneyIcon, true, TEXT_LAYER);
-
-            fogBackgroundSprite = new FogBackgroundSprite(renderLayer, FOG_LAYER, 0, 0, screenSize.WIDTH, screenSize.HEIGHT);
-            fogBackgroundSprite.stopGain();
 
             loosingGameDialog = new LoosingGameDialog(assetsLoader, this);
 
@@ -284,7 +241,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
             bonusCreator.setOnBonusCachedListener(this);
             restartRewardedVideoState();
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -297,7 +254,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
                     final TileSprite tileSprite;
                     final float currentYPosition = screenSize.HEIGHT - (y + 1) * TILE_HEIGHT;
                     if (x == 0) {
-                        final float leftXPosition = -TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
+                        final float leftXPosition = - TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
                         tileSprite = new TileSprite();
                         tileSprite.setTextureRegion(assetsLoader.getWhiteTileRightTextureRegion());
                         tileSprite.setX(leftXPosition);
@@ -332,7 +289,14 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         }
     }
 
-    private void createStone(final TileEntity leftTileEntity, final TileEntity rightTileEntity, final float tileYPosition) throws Exception {
+    private void createStone(final TileEntity leftTileEntity, final TileEntity rightTileEntity, final float tileYPosition) throws Exception{
+        // закомментированное решение добавляет падающий камень на черный тайл.
+        // такое решение играется более сложно, хотя и имеет прохождение.
+        // иммеет смысл оставить для увеличения сложности
+        /*if (leftTileEntity.getType().equals(TileEntity.Type.WHITE)
+                && rightTileEntity.getType().equals(TileEntity.Type.WHITE)) {
+            return;
+        }*/
         if (leftTileEntity.getType().equals(TileEntity.Type.BLACK)
                 || rightTileEntity.getType().equals(TileEntity.Type.BLACK)) {
             return;
@@ -352,16 +316,14 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         }
         if (binaryRandom.getRandom()) {
             stoneSprite.changeAnimation(DirectedAnimatedSprite.FlipDirection.RIGHT);
-            stoneSpriteAnimation.restart(0, tileYPosition, 25, screenSize.HEIGHT / 2, TILE_SPEED + 220);
+            stoneSpriteAnimation.restart(0, tileYPosition, 25, screenSize.HEIGHT / 2, TILE_SPEED + 200);
         } else {
             stoneSprite.changeAnimation(DirectedAnimatedSprite.FlipDirection.LEFT);
             stoneSpriteAnimation.restart(screenSize.WIDTH - stoneSprite.getWidth(), tileYPosition,
-                    screenSize.WIDTH - stoneSprite.getWidth() - 25, screenSize.HEIGHT / 2, TILE_SPEED + 220);
+                    screenSize.WIDTH - stoneSprite.getWidth() - 25, screenSize.HEIGHT / 2, TILE_SPEED + 200);
         }
         stoneSpriteAnimation.start();
         animator.createAnimation(stoneSpriteAnimation);
-
-        musicManager.playMusicStone();
 
         final float destinationX = screenSize.WIDTH / 2 - stoneSprite.getWidth() / 2;
         final float destinationY = screenSize.HEIGHT;
@@ -417,7 +379,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
                     final float currentYPosition = tilesStartYPosition - y * TILE_HEIGHT;
                     final boolean isLeft;
                     if (x == 0) {
-                        final float tileLeftXPosition = -TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
+                        final float tileLeftXPosition = - TILE_BEVEL_SIZE * ((screenSize.HEIGHT - currentYPosition) / TILE_HEIGHT);
                         tileSprite.setX(tileLeftXPosition);
                         isLeft = true;
                     } else {
@@ -445,20 +407,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
             final TileSprite tileSpriteUnderCharacter = getTileSpriteUnderCharacter();
             if (tileSpriteUnderCharacter != null) {
                 if (tileSpriteUnderCharacter.hasBonus()) { // TODO услокие бонусов
-                    final BonusType bonusType = tileSpriteUnderCharacter.getBonus().getType();
-
-                    switch (bonusType) {
-                        case GOLD:
-                            bonusCreator.onBonusCatched(tileSpriteUnderCharacter, moneyText.getX(), moneyText.getY());
-                            break;
-                        case BRILLIANCE:
-                            bonusCreator.onBonusCatched(tileSpriteUnderCharacter, moneyText.getX(), moneyText.getY());
-                            break;
-                        case SNOWFLAKE:
-                            bonusCreator.onBonusCatched(tileSpriteUnderCharacter, screenSize.WIDTH / 2, screenSize.HEIGHT / 2);
-                            break;
-                    }
-
+                    bonusCreator.onBonusCatched(tileSpriteUnderCharacter, moneyText.getX(), moneyText.getY());
                 }
                 if (tileSpriteUnderCharacter.getType().equals(TileEntity.Type.BLACK)) {
                     if (!isFailedGame) {
@@ -471,8 +420,6 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     }
 
     private void onGameFail() {
-        musicManager.playSoundFall();
-
         final TweenAnimation failTweenAnimation;
         if (character.getTweenAnimation() == null) {
             failTweenAnimation = new TweenAnimation();
@@ -497,9 +444,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     }
 
     private void createNewPair() {
-        distance++;
-        goldRewardIncrement++;
-        brillianceRewardIncrement++;
+        distance ++;
         distanceText.setText(distance + "m");
 
         tiles = tileCreator.setNewPair(tiles);
@@ -540,49 +485,16 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
             tileSprites.add(newRightTileSprite);
 
             // CREATE BONUS
-            // check gold reward
-            if (goldRewardIncrement >= GOLD_REWARD_BETWEEN_DISTANCE) {
-                goldRewardPeriodIncrement++;
-                if (goldRewardPeriodIncrement >= GOLD_REWARD_PERIOD) {
-                    goldRewardIncrement = -1;
-                    goldRewardPeriodIncrement = 0;
-                }
-            }
-            if (goldRewardPeriodIncrement == 0) {
-                goldBonusRandom = goldDefaultProbabilityRandom;
-            } else if (goldRewardPeriodIncrement == 1) {
-                goldBonusRandom = goldRewardProbabilityRandom;
-            }
-            // check brilliance reward
-            if (brillianceRewardIncrement >= BRILLIANCE_REWARD_BETWEEN_DISTANCE) {
-                brillianceRewardPeriodIncrement++;
-                if (brillianceRewardPeriodIncrement >= BRILLIANCE_REWARD_PERIOD) {
-                    brillianceRewardIncrement = -1;
-                    brillianceRewardPeriodIncrement = 0;
-                }
-            }
-            if (brillianceRewardPeriodIncrement == 0) {
-                brillianceBonusRandom = brillianceDefaultProbabilityRandom;
-            } else if (brillianceRewardPeriodIncrement == 1) {
-                brillianceBonusRandom = brillianceRewardProbabilityRandom;
-            }
-
             if (goldBonusRandom.get()) {
                 bonusCreator.createBonus(BonusType.GOLD, newLeftTileSprite, newRightTileSprite);
             } else if (brillianceBonusRandom.get()) {
                 bonusCreator.createBonus(BonusType.BRILLIANCE, newLeftTileSprite, newRightTileSprite);
-            } else if (distance > SNOWFLAKE_START_OFFSET &&
-                    currentSnowflakeOffset > SNOWFLAKE_NEXT_OFFSET &&
-                    snowflakeProbabilityRandom.get() && newLeftTileEntity.getType() == TileEntity.Type.WHITE
-                    && newRightTileSprite.getType() == TileEntity.Type.WHITE) {
+            } else if (distance > SNOWFLAKE_START_OFFSET && snowflakeProbabilityRandom.get()) {
                 bonusCreator.createBonus(BonusType.SNOWFLAKE, newLeftTileSprite, newRightTileSprite);
-                currentSnowflakeOffset = 0;
             }
             if (stoneRandom.get() && createdStoneSprite == null) { // за один раз только один камень
                 createStone(newLeftTileEntity, newRightTileEntity, tileYPosition);
             }
-
-            currentSnowflakeOffset++;
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -592,7 +504,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         float rotateAngle = 0;
         final float halfWidth = screenSize.WIDTH / 2;
         if (character.getX() + character.getWidth() / 2 <= halfWidth) {
-            rotateAngle = -CHARACTER_MAX_ROTATION_ANGLE * ((halfWidth - character.getX()) / halfWidth);
+            rotateAngle = - CHARACTER_MAX_ROTATION_ANGLE * ((halfWidth - character.getX()) / halfWidth);
         } else {
             rotateAngle = CHARACTER_MAX_ROTATION_ANGLE * (((character.getX() + character.getWidth()) - halfWidth) / halfWidth);
         }
@@ -658,11 +570,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         moneyCount = 0;
         distanceText.setText(distance + "m");
         moneyText.setText(moneyCount + "");
-
-        final float moneyFontWidth = FontUtils.getFontWidth(gameFont, moneyCount + "");
-        final float moneyXPosition = screenSize.WIDTH - moneyFontWidth - MONEY_RIGHT_OFFSET;
-        moneyText.setX(moneyXPosition);
-        moneyIcon.setX(moneyXPosition + moneyFontWidth + 10);
+        moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
     }
 
     private void checkCharacterIsDie() {
@@ -674,6 +582,8 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
                 isFailedGame = true;
                 onGameFail();
             }
+            //if (createdStoneSprite.getX())
+            // check intercept stone and character
         }
     }
 
@@ -694,15 +604,8 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
                 checkCharacterIsDie();
                 moveTiles(delta);
             }
-
-            if (fogBackgroundSprite != null) {
-                fogBackgroundSprite.render(delta);
-            }
-
             rotateCharacter();
-            //fps.log();
-        } else {
-            renderLayer.render(0);
+            fps.log();
         }
     }
 
@@ -713,12 +616,12 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
     @Override
     public void pause() {
-        musicManager.pauseAllSounds();
+
     }
 
     @Override
     public void resume() {
-        musicManager.resumeAllSounds();
+
     }
 
     @Override
@@ -735,14 +638,17 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     public void onTouchDown(final float xPos, final float yPos) {
         final float relativeClickX = xPos * screenSize.SCALE_PARAM;
         final float relativeClickY = yPos * screenSize.SCALE_PARAM;
+        /*if (relativeClickX > redButton.getX() && relativeClickX < redButton.getX() + redButton.getWidth() &&
+                relativeClickY > redButton.getY() && relativeClickY < redButton.getY() + redButton.getHeight()) {
+            // show rewarded video
+            onShowRewardedVideoListener.onShowRewardedVideoForX2();
+        }*/
         if (relativeClickX > pauseButton.getX() && relativeClickX < pauseButton.getX() + pauseButton.getWidth() &&
                 relativeClickY > pauseButton.getY() && relativeClickY < pauseButton.getY() + pauseButton.getHeight()) {
             if (gameState == GameState.PLAY) {
                 gameState = GameState.PAUSE;
-                pause();
-            } else {
+            } else{
                 gameState = GameState.PLAY;
-                resume();
             }
             return;
         }
@@ -752,7 +658,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
             loosingGameDialog.checkX2ButtonClickAndAction(relativeClickX, relativeClickY);
         } else {
             if (!isFailedGame) {
-                if (gameIsStarted  && gameState == GameState.PLAY) {
+                if (gameIsStarted) {
                     if (character.getFlipDirection() == CharacterSprite.FlipDirection.LEFT) {
                         character.changeAnimation(CharacterSprite.FlipDirection.RIGHT);
                         characterTween.copyFromAnimation(characterRightTween);
@@ -778,25 +684,12 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
     @Override
     public void onRestartAction() {
-        fogBackgroundSprite.stopGain();
         restartRewardedVideoState();
         renderLayer.addTextSprite(clickToStartTextSprite, CLICK_TO_START_LAYER);
         loosingGameDialog.removeFromScreen(renderLayer);
 
         isFailedGame = false;
         gameIsStarted = false;
-
-        goldRewardIncrement = -1;
-        goldRewardPeriodIncrement = 0;
-        goldBonusRandom = goldDefaultProbabilityRandom;
-
-        brillianceRewardIncrement = -1;
-        brillianceRewardPeriodIncrement = 0;
-        brillianceBonusRandom = brillianceDefaultProbabilityRandom;
-
-        if (interstitialBinaryRandom.get()) {
-            onShowAdListener.onShowInterstitialAd();
-        }
 
         restartGame();
         clearProgress();
@@ -806,38 +699,41 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
     @Override
     public void onContinueAction() {
-        onShowAdListener.onShowRewardedVideoForContinue();
+        /*isFailedGame = false;
+        loosingGameDialog.removeFromScreen(renderLayer);
+        renderLayer.addTextSprite(clickToStartTextSprite, CLICK_TO_START_LAYER);
+
+        isFailedGame = false;
+        gameIsStarted = false;
+
+        restartGame();
+        currentGameMoneyCount = 0;
+        createDefaultTiles();*/
+        onShowRewardedVideoListener.onShowRewardedVideoForContinue();
     }
 
     @Override
     public void onX2Action() {
-        onShowAdListener.onShowRewardedVideoForX2();
+        onShowRewardedVideoListener.onShowRewardedVideoForX2();
     }
 
     @Override
     public void onBonusCatched(BonusSprite bonusSprite) {
-        if (bonusSprite.getType().equals(BonusType.GOLD) || bonusSprite.getType().equals(BonusType.BRILLIANCE)) {
-            moneyCount += bonusSprite.getSelfCoast();
-            currentGameMoneyCount += bonusSprite.getSelfCoast();
-            moneyText.setText(moneyCount + "");
-
-            final float moneyFontWidth = FontUtils.getFontWidth(gameFont, moneyCount + "");
-            final float moneyFontXPosition = screenSize.WIDTH - moneyFontWidth - MONEY_RIGHT_OFFSET;
-
-            moneyText.setX(moneyFontXPosition);
-            moneyIcon.setX(moneyFontXPosition + moneyFontWidth + 10);
-        } else if (bonusSprite.getType().equals(BonusType.SNOWFLAKE)) {
-            fogBackgroundSprite.startGain();
-        }
+        moneyCount += bonusSprite.getSelfCoast();
+        currentGameMoneyCount += bonusSprite.getSelfCoast();
+        moneyText.setText(moneyCount + "");
+        moneyText.setX(screenSize.WIDTH - FontUtils.getFontWidth(gameFont, moneyCount + "") - 50);
         renderLayer.removeSprite(bonusSprite);
         pool.release(bonusSprite);
     }
 
     public void onRewardedVideoLoaded() {
+        renderLayer.addSprite(redButton, true, RED_BUTTON_LAYER);
         isRewardedVideoLoaded = true;
     }
 
     public void onRewardedVideoUnload() {
+        renderLayer.removeSprite(redButton);
         isRewardedVideoLoaded = false;
     }
 
@@ -856,9 +752,8 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     }
 
     public void onX2VideoRewarded() {
-        showedRewardedVideoStore.setShowedRewardedVideoType(ShowedRewardedVideoStore.RewardedVideoType.X2_SHOWED);
-        currentGameMoneyCount = Double.valueOf(currentGameMoneyCount * 1.5).longValue();
-        moneyCount = Double.valueOf(moneyCount * 1.5).longValue();
+        showedRewardedVideoStore.setShowedRewardedVideoType(ShowedRewardedVideoStore.RewardedVideoType.CONTINUE_SHOWED);
+        currentGameMoneyCount = currentGameMoneyCount * 2;
         loosingGameDialog.removeFromScreen(renderLayer);
         showLoosingGameDialog();
     }
@@ -874,7 +769,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
         boolean canContinueGame = false;
         boolean canIncreaseMoney = false;
-        if (isRewardedVideoLoaded) {
+        if(isRewardedVideoLoaded) {
             final ShowedRewardedVideoStore.RewardedVideoType rewardedVideoType =
                     showedRewardedVideoStore.getShowedRewardedVideoType();
             if (rewardedVideoType.equals(ShowedRewardedVideoStore.RewardedVideoType.NOTHING_SHOWED)) {

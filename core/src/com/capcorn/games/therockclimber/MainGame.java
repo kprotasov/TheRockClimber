@@ -14,10 +14,10 @@ public class MainGame extends Game {
 	private AssetManager assetsManager;
 	private boolean isAssetsLoaded = false;
 	private SelectedGameCharacterStore selectedGameCharacterStore;
-	private final OnShowAdListener onShowAdListener;
+	private final OnShowRewardedVideoListener onShowRewardedVideoListener;
 
-	public MainGame(final OnShowAdListener listener) {
-		this.onShowAdListener = listener;
+	public MainGame(final OnShowRewardedVideoListener listener) {
+		this.onShowRewardedVideoListener = listener;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class MainGame extends Game {
 
 	private void initGameScreen() {
 		assetsLoader.createTextures();
-		gameScreen = new GameScreen(assetsLoader, onShowAdListener);
+		gameScreen = new GameScreen(assetsLoader, onShowRewardedVideoListener);
 		setScreen(gameScreen);
 	}
 

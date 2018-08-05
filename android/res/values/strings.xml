@@ -13,7 +13,4 @@
 
     <string name="you_money">%s</string>
 
-    <string name="analytics_event_id_start_app">start_app</string>
-    <string name="analytics_event_name_start_app">application_started</string>
-
 </resources>

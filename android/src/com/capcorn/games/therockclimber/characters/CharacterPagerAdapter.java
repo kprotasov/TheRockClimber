@@ -3,7 +3,6 @@ package com.capcorn.games.therockclimber.characters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,7 @@ public class CharacterPagerAdapter extends PagerAdapter {
 
         final ImageView imageView = viewGroup.findViewById(R.id.imageView);
         final TextView priceText = viewGroup.findViewById(R.id.priceText);
-        final TextView nameText = viewGroup.findViewById(R.id.nameText);
+        //final LinearLayout characterContainer = viewGroup.findViewById(R.id.characterContainer);
 
         final Characters character = characters[position];
 
@@ -58,7 +57,6 @@ public class CharacterPagerAdapter extends PagerAdapter {
             priceText.setVisibility(View.VISIBLE);
         }
         priceText.setText(String.valueOf(character.getPrice()));
-        nameText.setText(character.getCharacterName());
 
         container.addView(viewGroup);
         return viewGroup;
