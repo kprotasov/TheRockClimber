@@ -11,6 +11,8 @@ public enum AnimatedResourceNames {
     BASE_CHARACTER("character.png", 6, 4, 200, 393),
     FORESTER_CHARACTER("character_forester.png", 6, 4, 200, 393),
     ZOMBIE_CHARACTER("character_zombie.png", 6, 4, 200, 393),
+    SANTA_CLAUS_CHARACTER("character_santa_claus.png", 6, 4, 200, 393),
+    DRACULA_CHARACTER("character_dracula.png", 6, 4, 200, 393),
     STONE("stone_spritesheet.png", 11, 1, 100, 100);
 
     public static AnimatedResourceNames getResourceByName(final String name) {

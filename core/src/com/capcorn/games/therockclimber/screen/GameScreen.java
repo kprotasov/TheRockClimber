@@ -3,7 +3,6 @@ package com.capcorn.games.therockclimber.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.capcorn.game.engine.animation.Animator;
@@ -29,6 +28,7 @@ import com.capcorn.games.therockclimber.input.OnTouchListener;
 import com.capcorn.games.therockclimber.settings.Settings;
 import com.capcorn.games.therockclimber.settings.store.BestScoreStore;
 import com.capcorn.games.therockclimber.settings.store.MoneyStore;
+import com.capcorn.games.therockclimber.settings.store.SettingsStore;
 import com.capcorn.games.therockclimber.settings.store.ShowedRewardedVideoStore;
 import com.capcorn.games.therockclimber.sound.MusicManager;
 import com.capcorn.games.therockclimber.sprite.FogBackgroundSprite;
@@ -43,6 +43,7 @@ import com.capcorn.games.therockclimber.sprite.dialogs.LoosingGameDialog;
 import com.capcorn.games.therockclimber.sprite.bonus.SnowflakeSprite;
 import com.capcorn.games.therockclimber.sprite.StoneSprite;
 import com.capcorn.games.therockclimber.sprite.TileSprite;
+import com.capcorn.settings.StringsResources;
 
 import java.util.ArrayList;
 
@@ -58,8 +59,6 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         PAUSE,
         PLAY;
     }
-
-    private static final String CLICK_TO_START_TEXT = "click to start";
 
     private static final float CHARACTER_MAX_UP = 50;
     private static final int CHARACTER_MAX_ROTATION_ANGLE = 20;
@@ -77,6 +76,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     //private static final float BRILLIANCE_SIZE = 50;
     private static final float CHARACTER_HEIGHT = 196;
     private static final float CHARACTER_FAIL_SPEED = 800.0f;
+    private static final int VIBRATION_LENGTH = 100;
 
     private boolean gameIsStarted = false;
     private boolean isFailedGame = false;
@@ -96,9 +96,10 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private OnShowAdListener onShowAdListener;
     private GameState gameState;
     private boolean isRewardedVideoLoaded = false;
-    private Sprite redButton;
     private FogBackgroundSprite fogBackgroundSprite;
     private MusicManager musicManager;
+    private SettingsStore settingsStore;
+    private StringsResources stringsResources;
 
     private BestScoreStore bestScoreStore;
     private MoneyStore moneyStore;
@@ -166,7 +167,7 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
     private static final int RED_BUTTON_LAYER = 9;
     private static final int PAUSE_BUTTON_LAYER = 10;
 
-    public GameScreen(final AssetsLoader assetsLoader, final OnShowAdListener onShowAdListener) {
+    public GameScreen(final AssetsLoader assetsLoader, final OnShowAdListener onShowAdListener, final StringsResources stringsResources) {
         this.assetsLoader = assetsLoader;
         Gdx.input.setInputProcessor(new InputHandler(this));
 
@@ -204,16 +205,15 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
         musicManager = new MusicManager(assetsLoader);
         bonusCreator = new BonusCreator(pool, renderLayer, assetsLoader, musicManager, animator, BONUS_LAYER);
 
-        redButton = new Sprite(assetsLoader.getRedButtonTextureRegion(), screenSize.WIDTH / 2, 50);
-
         gameState = GameState.PLAY;
 
         musicManager.playMusicBack1();
 
+        settingsStore = new SettingsStore();
+        this.stringsResources = stringsResources;
+
         initGameObjects();
         createDefaultTiles();
-
-
     }
 
     private void initGameObjects() {
@@ -273,9 +273,9 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
             fogBackgroundSprite = new FogBackgroundSprite(renderLayer, FOG_LAYER, 0, 0, screenSize.WIDTH, screenSize.HEIGHT);
             fogBackgroundSprite.stopGain();
 
-            loosingGameDialog = new LoosingGameDialog(assetsLoader, this);
+            loosingGameDialog = new LoosingGameDialog(assetsLoader, this, stringsResources);
 
-            clickToStartTextSprite = new ClickToStartTextSprite(CLICK_TO_START_TEXT, screenSize);
+            clickToStartTextSprite = new ClickToStartTextSprite(stringsResources.getClickToStart(), screenSize);
             renderLayer.addTextSprite(clickToStartTextSprite, CLICK_TO_START_LAYER);
 
             pauseButton = new Sprite(assetsLoader.getPauseButtonTextureRegion(), 50,
@@ -472,6 +472,10 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
     private void onGameFail() {
         musicManager.playSoundFall();
+
+        if (settingsStore.isVibrationEnabled()) {
+            Gdx.input.vibrate(VIBRATION_LENGTH);
+        }
 
         final TweenAnimation failTweenAnimation;
         if (character.getTweenAnimation() == null) {
@@ -796,6 +800,9 @@ public class GameScreen implements Screen, OnTouchListener, LoosingGameDialog.On
 
         if (interstitialBinaryRandom.get()) {
             onShowAdListener.onShowInterstitialAd();
+        }
+        if (createdStoneSprite != null) {
+            renderLayer.removeSprite(createdStoneSprite);
         }
 
         restartGame();

@@ -21,7 +21,6 @@ import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.PAUS
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RAM;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.RED_BUTTON;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.SNOWFLAKE;
-import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE;
 import static com.capcorn.games.therockclimber.graphics.StaticResourceNames.WHITE_TILE_ATLAS;
 
 /**
@@ -96,7 +95,6 @@ public class AssetsLoader {
         manager.load(BACKGROUND.getName(), Texture.class);
         manager.load(BLACK_TILE_ATLAS.getName(), Texture.class);
         manager.load(WHITE_TILE_ATLAS.getName(), Texture.class);
-        manager.load(WHITE_TILE.getName(), Texture.class);
         manager.load(LOOSING_GAME_DIALOG_BACKGROUND.getName(), Texture.class);
         manager.load(DIALOG_BUTTON.getName(), Texture.class);
         manager.load(RAM.getName(), Texture.class);
@@ -191,7 +189,6 @@ public class AssetsLoader {
         manager.unload(BACKGROUND.getName());
         manager.unload(BLACK_TILE_ATLAS.getName());
         manager.unload(WHITE_TILE_ATLAS.getName());
-        manager.unload(WHITE_TILE.getName());
         manager.unload(RAM.getName());
         manager.unload(LOOSING_GAME_DIALOG_BACKGROUND.getName());
         manager.unload(DIALOG_BUTTON.getName());

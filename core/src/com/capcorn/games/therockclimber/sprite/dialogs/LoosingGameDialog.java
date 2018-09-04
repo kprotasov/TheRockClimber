@@ -8,6 +8,7 @@ import com.capcorn.game.engine.sprite.TextSprite;
 import com.capcorn.games.therockclimber.font.DistanceFontCreator;
 import com.capcorn.games.therockclimber.font.FontUtils;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
+import com.capcorn.settings.StringsResources;
 
 /**
  * User: kprotasov
@@ -18,11 +19,8 @@ import com.capcorn.games.therockclimber.graphics.AssetsLoader;
 public class LoosingGameDialog extends Sprite {
 
     private static final String INITIAL_TEXT = "";
-    private static final String CURRENT_SCORE_TEXT = "You Score: %s";
-    private static final String BEST_SCORE_TEXT = "Best Score: %s";
-    private static final String MONEY_TEXT = "You money: %s";
-    private static final String RESTART_BUTTON_TEXT = "Restart";
-    private static final String CONTINUE_BUTTON_TEXT = "Continue";
+    private static String RESTART_BUTTON_TEXT;
+    private static String CONTINUE_BUTTON_TEXT;
     private static final String X_2_BUTTON_TEXT = "x1.5";
 
     private static final int TITLE_FONT_SIZE = 30;
@@ -43,11 +41,17 @@ public class LoosingGameDialog extends Sprite {
 
     private boolean isShown = false;
     private OnLoosingDialogActionListener onLoosingDialogActionListener;
+    private StringsResources stringsResources;
 
-    public LoosingGameDialog(final AssetsLoader assetsLoader, OnLoosingDialogActionListener listener) {
+    public LoosingGameDialog(final AssetsLoader assetsLoader,
+                             final OnLoosingDialogActionListener listener, final StringsResources stringsResources) {
         super(assetsLoader.getLoosingGameBackgroundTextureRegion(), 0, 0);
 
         this.onLoosingDialogActionListener = listener;
+        this.stringsResources = stringsResources;
+
+        RESTART_BUTTON_TEXT = stringsResources.getRestartButton();
+        CONTINUE_BUTTON_TEXT = stringsResources.getContinueButton();
 
         dialogFont = DistanceFontCreator.createFont(TITLE_FONT_SIZE, false);
         currentScoreTextSprite = new TextSprite(INITIAL_TEXT, dialogFont, 0, 0);
@@ -65,9 +69,9 @@ public class LoosingGameDialog extends Sprite {
         this.canContinueGame = canContinueGame;
         this.canIncreaseMoney = canIncreaseMoney;
 
-        final String formattedCurrentScoreText = String.format(CURRENT_SCORE_TEXT, currentScore);
-        final String formattedBestScoreText = String.format(BEST_SCORE_TEXT, bestScore);
-        final String formattedTotalMoneyText = String.format(MONEY_TEXT, totalMoneyCount);
+        final String formattedCurrentScoreText = String.format(stringsResources.getScore(), currentScore);
+        final String formattedBestScoreText = String.format(stringsResources.getBestScore(), bestScore);
+        final String formattedTotalMoneyText = String.format(stringsResources.getMoney(), totalMoneyCount);
 
         final float dialogCenter = getX() + getWidth() / 2;
 

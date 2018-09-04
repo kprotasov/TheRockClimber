@@ -3,6 +3,7 @@ package com.capcorn.games.therockclimber.sprite;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.capcorn.game.engine.sprite.AnimatedSprite;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
+import com.capcorn.games.therockclimber.sprite.DirectedAnimatedSprite;
 
 /**
  * User: kprotasov
@@ -10,7 +11,7 @@ import com.capcorn.games.therockclimber.graphics.AssetsLoader;
  * Time: 23:31
  */
 
-public class CharacterSprite extends DirectedAnimatedSprite {
+public class CharacterSprite extends DirectedAnimatedSprite{
 
     public CharacterSprite() {
         super();

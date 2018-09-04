@@ -13,7 +13,7 @@ import com.capcorn.games.therockclimber.settings.Settings;
 
 public class ClickToStartTextSprite extends TextSprite {
 
-    private static final int FONT_SIZE = 50;
+    private static final int FONT_SIZE = 35;
 
     private BitmapFont font;
 

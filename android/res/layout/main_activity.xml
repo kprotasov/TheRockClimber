@@ -11,6 +11,7 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/game_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
@@ -40,5 +41,16 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/character_top_offset"/>
+
+    <TextView
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_title"
+        android:textColor="@color/start_button_text_color"
+        android:textSize="@dimen/start_text_size"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/settings_top_offset"/>
 
 </RelativeLayout>

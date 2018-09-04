@@ -1,6 +1,7 @@
 package com.capcorn.games.therockclimber.characters;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.capcorn.games.therockclimber.AppSettings;
 import com.capcorn.games.therockclimber.R;
 import com.capcorn.settings.ApplicationConstants;
 import com.google.android.gms.ads.AdRequest;
@@ -57,6 +59,7 @@ public class CharacterSelectorActivity extends Activity implements RewardedVideo
         super.onCreate(savedInstanceState);
 
         MobileAds.initialize(this, ApplicationConstants.AD_MOB_APPLICATION_IDENTIFIER);
+        final Typeface typeFace = Typeface.createFromAsset(getAssets(), AppSettings.APPLICATION_TYPEFACE);
 
         rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
         rewardedVideoAd.setRewardedVideoAdListener(this);
@@ -74,7 +77,9 @@ public class CharacterSelectorActivity extends Activity implements RewardedVideo
         rootView.setBackgroundResource(backgroundsList.get(currentBackgroundPosition));
 
         moneyTextView = findViewById(R.id.money_text_view);
+        moneyTextView.setTypeface(typeFace);
         selectButton = findViewById(R.id.select_button);
+        selectButton.setTypeface(typeFace);
         selectedCharacterStore = new AppSelectedCharacterStore(this);
 
         setupMoneyText();

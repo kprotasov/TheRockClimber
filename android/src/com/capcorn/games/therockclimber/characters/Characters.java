@@ -17,7 +17,11 @@ public enum Characters {
     FORESTER(AnimatedResourceNames.FORESTER_CHARACTER.getName(), 1000, R.drawable.character_forester,
             R.drawable.character_forester_gray, false, "forester", false),
     ZOMBIE(AnimatedResourceNames.ZOMBIE_CHARACTER.getName(), 2000, R.drawable.character_zombie,
-            R.drawable.character_zombie_gray, false, "zombie", false);
+            R.drawable.character_zombie_gray, false, "zombie", false),
+    SANTA_CLAUS(AnimatedResourceNames.SANTA_CLAUS_CHARACTER.getName(), 3000, R.drawable.character_santa,
+            R.drawable.character_santa_gray, false, "santa claus", false),
+    DRACULA(AnimatedResourceNames.DRACULA_CHARACTER.getName(), 4000, R.drawable.character_dracula,
+            R.drawable.character_dracula_gray, false, "dracula", false);
 
     public static String getNamesList() {
         StringBuilder result = new StringBuilder();
@@ -101,6 +105,10 @@ public enum Characters {
             character = Characters.FORESTER;
         } else if (characterJson.name.equals(AnimatedResourceNames.ZOMBIE_CHARACTER.getName())) {
             character = Characters.ZOMBIE;
+        } else if (characterJson.name.equals(AnimatedResourceNames.SANTA_CLAUS_CHARACTER.getName())) {
+            character = Characters.SANTA_CLAUS;
+        } else if (characterJson.name.equals(AnimatedResourceNames.DRACULA_CHARACTER.getName())) {
+            character = Characters.DRACULA;
         } else {
             character = Characters.BASE;
         }
@@ -125,7 +133,7 @@ public enum Characters {
         private boolean isBayed;
 
         public CharacterJson(final String name, final long price, final int imageResourceId, final int notBuyedResourceId,
-                   final boolean selected, final String characterName, final boolean isBayed) {
+                             final boolean selected, final String characterName, final boolean isBayed) {
             this.name = name;
             this.price = price;
             this.imageResourceId = imageResourceId;

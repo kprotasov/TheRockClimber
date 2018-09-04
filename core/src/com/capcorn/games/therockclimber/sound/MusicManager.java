@@ -2,6 +2,7 @@ package com.capcorn.games.therockclimber.sound;
 
 import com.badlogic.gdx.audio.Music;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
+import com.capcorn.games.therockclimber.settings.store.SettingsStore;
 
 /**
  * User: kprotasov
@@ -21,9 +22,11 @@ public class MusicManager {
     private State backSound1State = State.STOP;
     private State musicWindState = State.STOP;
     private State musicStoneState = State.STOP;
+    private SettingsStore settingsStore;
 
     public MusicManager(final AssetsLoader assetsLoader) {
         this.assetsLoader = assetsLoader;
+        this.settingsStore = new SettingsStore();
         assetsLoader.getBackMusic1().setOnCompletionListener(new Music.OnCompletionListener() {
             @Override
             public void onCompletion(Music music) {
@@ -45,7 +48,7 @@ public class MusicManager {
     }
 
     public void playSoundGold() {
-        if (assetsLoader.getSoundGold() != null) {
+        if (assetsLoader.getSoundGold() != null && settingsStore.isSoundEnabled()) {
             assetsLoader.getSoundGold().play();
         }
     }
@@ -57,13 +60,13 @@ public class MusicManager {
     }
 
     public void resumeSoundGold() {
-        if (assetsLoader.getSoundGold() != null) {
+        if (assetsLoader.getSoundGold() != null && settingsStore.isSoundEnabled()) {
             assetsLoader.getSoundGold().resume();
         }
     }
 
     public void playSoundBrilliance() {
-        if (assetsLoader.getSoundBrilliance() != null) {
+        if (assetsLoader.getSoundBrilliance() != null && settingsStore.isSoundEnabled()) {
             assetsLoader.getSoundBrilliance().play();
         }
     }
@@ -75,13 +78,13 @@ public class MusicManager {
     }
 
     public void resumeSoundBrilliance() {
-        if (assetsLoader.getSoundBrilliance() != null) {
+        if (assetsLoader.getSoundBrilliance() != null && settingsStore.isSoundEnabled()) {
             assetsLoader.getSoundBrilliance().resume();
         }
     }
 
     public void playSoundFall() {
-        if (assetsLoader.getSoundFall() != null) {
+        if (assetsLoader.getSoundFall() != null && settingsStore.isSoundEnabled()) {
             assetsLoader.getSoundFall().play();
         }
     }
@@ -93,13 +96,13 @@ public class MusicManager {
     }
 
     public void resumeSoundFall() {
-        if (assetsLoader.getSoundFall() != null) {
+        if (assetsLoader.getSoundFall() != null && settingsStore.isSoundEnabled()) {
             assetsLoader.getSoundFall().resume();
         }
     }
 
     public void playMusicBack1() {
-        if (assetsLoader.getBackMusic1() != null) {
+        if (assetsLoader.getBackMusic1() != null && settingsStore.isMusicEnabled()) {
             assetsLoader.getBackMusic1().play();
             backSound1State = State.PLAY;
         }
@@ -113,7 +116,7 @@ public class MusicManager {
     }
 
     public void resumeMusicBack1() {
-        if (assetsLoader.getBackMusic1() != null) {
+        if (assetsLoader.getBackMusic1() != null && settingsStore.isMusicEnabled()) {
             if (backSound1State == State.PAUSE) {
                 playMusicBack1();
             }
@@ -128,7 +131,7 @@ public class MusicManager {
     }
 
     public void playMusicWind() {
-        if (assetsLoader.getMusicWind() != null) {
+        if (assetsLoader.getMusicWind() != null && settingsStore.isMusicEnabled()) {
             assetsLoader.getMusicWind().play();
             musicWindState = State.PLAY;
         }
@@ -142,7 +145,7 @@ public class MusicManager {
     }
 
     public void resumeMusicWind() {
-        if (assetsLoader.getMusicWind() != null) {
+        if (assetsLoader.getMusicWind() != null && settingsStore.isMusicEnabled()) {
             if (musicWindState == State.PAUSE) {
                 playMusicWind();
             }
@@ -157,7 +160,7 @@ public class MusicManager {
     }
 
     public void playMusicStone() {
-        if (assetsLoader.getMusicStone() != null) {
+        if (assetsLoader.getMusicStone() != null && settingsStore.isMusicEnabled()) {
             assetsLoader.getMusicStone().play();
             musicStoneState = State.PLAY;
         }
@@ -171,7 +174,7 @@ public class MusicManager {
     }
 
     public void resumeMusicStone() {
-        if (assetsLoader.getMusicStone() != null) {
+        if (assetsLoader.getMusicStone() != null && settingsStore.isMusicEnabled()) {
             if (musicStoneState == State.PAUSE) {
                 playMusicStone();
             }
@@ -201,12 +204,14 @@ public class MusicManager {
     }
 
     public void resumeAllSounds() {
-        resumeSoundGold();
-        resumeSoundBrilliance();
-        resumeSoundFall();
-        resumeMusicBack1();
-        resumeMusicWind();
-        resumeMusicStone();
+        if (settingsStore.isSoundEnabled()) {
+            resumeSoundGold();
+            resumeSoundBrilliance();
+            resumeSoundFall();
+            resumeMusicBack1();
+            resumeMusicWind();
+            resumeMusicStone();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ import com.capcorn.games.therockclimber.graphics.AnimatedResourceNames;
 import com.capcorn.games.therockclimber.graphics.AssetsLoader;
 import com.capcorn.games.therockclimber.screen.GameScreen;
 import com.capcorn.games.therockclimber.settings.store.SelectedGameCharacterStore;
+import com.capcorn.settings.StringsResources;
 
 public class MainGame extends Game {
 
@@ -15,9 +16,11 @@ public class MainGame extends Game {
 	private boolean isAssetsLoaded = false;
 	private SelectedGameCharacterStore selectedGameCharacterStore;
 	private final OnShowAdListener onShowAdListener;
+	private final StringsResources stringsResources;
 
-	public MainGame(final OnShowAdListener listener) {
+	public MainGame(final OnShowAdListener listener, final StringsResources stringsResources) {
 		this.onShowAdListener = listener;
+		this.stringsResources = stringsResources;
 	}
 
 	@Override
@@ -76,7 +79,7 @@ public class MainGame extends Game {
 
 	private void initGameScreen() {
 		assetsLoader.createTextures();
-		gameScreen = new GameScreen(assetsLoader, onShowAdListener);
+		gameScreen = new GameScreen(assetsLoader, onShowAdListener, stringsResources);
 		setScreen(gameScreen);
 	}
 

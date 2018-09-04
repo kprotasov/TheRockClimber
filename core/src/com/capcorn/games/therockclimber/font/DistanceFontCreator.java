@@ -13,10 +13,15 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
  */
 public class DistanceFontCreator {
 
-	private static final String FONT = "fonts/Lemonada-Regular.ttf";
+	private static final String FONT = "fonts/Tenor_Sans/TenorSans-Regular.ttf";
 	private static final int DEFAULT_FONT_SIZE = 20;
 	private static final Color FONT_COLOR = Color.valueOf("455060");
 	private static final Color BORDER_COLOR = Color.valueOf("132338");
+	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			+ "abcdefghijklmnopqrstuvwxyz"
+			+ "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
+			+ "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+			+ "1234567890.,:;_¡!¿?\"'+-*/()[]={}";
 
 	public static BitmapFont createFont(final int fontSize) {
 		return createFont(fontSize, true, FONT_COLOR);
@@ -29,6 +34,8 @@ public class DistanceFontCreator {
 	public static BitmapFont createFont(final int fontSize, final boolean hasBorder, final Color fontColor) {
 		final FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT));
 		final FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+		parameter.characters = CHARACTERS;
 		parameter.size = fontSize;
 		parameter.color = fontColor;
 		if (hasBorder) {

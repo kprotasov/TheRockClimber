@@ -1,6 +1,7 @@
 package com.capcorn.games.therockclimber.characters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.capcorn.games.therockclimber.AppSettings;
 import com.capcorn.games.therockclimber.R;
 
 /**
@@ -44,9 +46,13 @@ public class CharacterPagerAdapter extends PagerAdapter {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final ViewGroup viewGroup = (ViewGroup) inflater.inflate(layoutId, container, false);
 
+        final Typeface typeFace = Typeface.createFromAsset(context.getAssets(), AppSettings.APPLICATION_TYPEFACE);
+
         final ImageView imageView = viewGroup.findViewById(R.id.imageView);
         final TextView priceText = viewGroup.findViewById(R.id.priceText);
+        priceText.setTypeface(typeFace);
         final TextView nameText = viewGroup.findViewById(R.id.nameText);
+        nameText.setTypeface(typeFace);
 
         final Characters character = characters[position];
 

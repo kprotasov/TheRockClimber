@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TheRockClimber</string>
-    <string name="start_button">start</string>
-    <string name="character_button">character</string>
+    <string name="app_name">RockClimber</string>
+    <string name="start_button">Start</string>
+    <string name="character_button">Character</string>
     <string name="choose_character">Choose character</string>
 
     <string name="character_selector_button_selected">selected</string>
@@ -15,5 +15,17 @@
 
     <string name="analytics_event_id_start_app">start_app</string>
     <string name="analytics_event_name_start_app">application_started</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_sound">sound</string>
+    <string name="settings_music">music</string>
+    <string name="settings_vibration">vibration</string>
+
+    <string name="game_click_to_stare">click to start</string>
+    <string name="game_dialog_score">You score: %s</string>
+    <string name="game_dialog_best_score">Best score: %s</string>
+    <string name="game_dialog_money">You money: %s</string>
+    <string name="game_dialog_restart">Restart</string>
+    <string name="game_dialog_continue">Continue</string>
 
 </resources>

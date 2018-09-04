@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RockClimber</string>
+    <string name="start_button">Старт</string>
+    <string name="character_button">Выбор героя</string>
+    <string name="choose_character">Выбрать героя</string>
+
+    <string name="character_selector_button_selected">выбран</string>
+    <string name="character_selector_button_select">выбрать</string>
+    <string name="character_selector_button_buy">купить</string>
+    <string name="character_selector_button_add_money">добавить денег</string>
+
+    <string name="you_money">%s</string>
+
+    <string name="analytics_event_id_start_app">start_app</string>
+    <string name="analytics_event_name_start_app">application_started</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_sound">звук</string>
+    <string name="settings_music">музыка</string>
+    <string name="settings_vibration">вибрация</string>
+
+    <string name="game_click_to_stare">нажмите чтобы начать</string>
+    <string name="game_dialog_score">Результат: %s</string>
+    <string name="game_dialog_best_score">Лучший результат: %s</string>
+    <string name="game_dialog_money">Заработано: %s</string>
+    <string name="game_dialog_restart">Старт</string>
+    <string name="game_dialog_continue">Продолжить</string>
+
+</resources>

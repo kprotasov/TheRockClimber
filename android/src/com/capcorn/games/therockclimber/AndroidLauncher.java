@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.capcorn.settings.ApplicationConstants;
+import com.capcorn.settings.StringsResources;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -36,12 +37,16 @@ public class AndroidLauncher extends AndroidApplication implements RewardedVideo
 
 	private RewardedType currentRewardedType = RewardedType.CONTINUE;
 
+	private StringsResources stringsResources;
+
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 
-		mainGame = new MainGame(this);
+		initStringsResources();
+
+		mainGame = new MainGame(this, stringsResources);
 		initialize(mainGame, config);
 
 		MobileAds.initialize(this, ApplicationConstants.AD_MOB_APPLICATION_IDENTIFIER);
@@ -57,6 +62,16 @@ public class AndroidLauncher extends AndroidApplication implements RewardedVideo
 		createInterstitialListener();
 
 		loadRewardedVideo();
+	}
+
+	private void initStringsResources() {
+		stringsResources = new StringsResources();
+		stringsResources.setClickToStart(getString(R.string.game_click_to_stare));
+		stringsResources.setScore(getString(R.string.game_dialog_score));
+		stringsResources.setBestScore(getString(R.string.game_dialog_best_score));
+		stringsResources.setMoney(getString(R.string.game_dialog_money));
+		stringsResources.setRestartButton(getString(R.string.game_dialog_restart));
+		stringsResources.setContinueButton(getString(R.string.game_dialog_continue));
 	}
 
 	private void createInterstitialListener() {
